@@ -9,7 +9,7 @@
 \colorlet{pagecolor}{white}
 
 %code colors
-\definecolor{codebgcolor}{rgb}{1,1,1}
+\definecolor{codebgcolor}{rgb}{0.95,0.95,0.95}
 \definecolor{commentcolor}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{stringcolor}{rgb}{0.58,0,0.82}
@@ -17,9 +17,32 @@
 \definecolor{keywordcolor}{rgb}{0,0,1}
 \definecolor{procnamecolor}{rgb}{1,0,0}
 
-%section highlight colors
+%interfaces section highlight colors
 \newcommand\highlightdecoupledio{orange!30}
 \newcommand\highlightvalidio{green!30}
 \newcommand\highlightqueue{yellow!30}
 \newcommand\highlightpipe{blue!30}
 \newcommand\highlightarbiters{red!30}
+
+\colorlet{decoupledio}{orange!90}
+\colorlet{validio}{green!90}
+\colorlet{queue}{yellow!90}
+\colorlet{pipe}{blue!60}
+\colorlet{arbiters}{red!90}
+
+%afunction blocks section highlight colors
+\newcommand\highlightstateless{orange!30}
+\newcommand\highlightstateful{green!30}
+
+\colorlet{stateless}{orange!90}
+\colorlet{stateful}{green!90}
+
+
+%hardware generation and aggreagate types section highlight colors
+\newcommand\highlighthardware{orange!30}
+\newcommand\highlightbundle{green!30}
+\newcommand\highlightvec{yellow!30}
+
+\colorlet{hardware-generation}{orange!90}
+\colorlet{bundle}{green!90}
+\colorlet{vec}{yellow!90}

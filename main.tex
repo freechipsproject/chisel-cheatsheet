@@ -247,7 +247,8 @@ x.asUInt.andR
  \newline \newline
 \columnbreak
 
-\section{Hardware Generation } \hrulefill
+\section{Hardware Generation } \hrulefill \\
+\noindent\adjustbox{bgcolor=\highlighthardware,minipage=[t]{\linewidth}}{
 \subsection{Functions } provide block abstractions for code.  Scala
 functions that instantiate or return Chisel types are code generators.
 \subsection{Also}: Scala's \verb$if$ and \verb$for$ can be used to control hardware generation
@@ -258,9 +259,11 @@ val number = Reg(if(can_be_negative) SInt()
 \end{scala}
 will create a Register of type SInt or UInt depending on the value of a
 Scala variable
+}
 
-\section{Aggregate Types } \hrulefill
-\subsection{Bundle } contains \verb$Data$ types indexed by name
+\section{Aggregate Types } \hrulefill \\
+\noindent\adjustbox{bgcolor=\highlightbundle,minipage=[t]{\linewidth}}{
+\subsection{\colorbox{bundle}{Bundle} } contains \verb$Data$ types indexed by name
 \subsubsection{Defining}: subclass \verb$Bundle$, define components:
 \begin{scala}
 class MyBundle extends Bundle {
@@ -268,8 +271,10 @@ class MyBundle extends Bundle {
   val b = UInt(32.W)
 }
 \end{scala}
-\subsubsection{Constructor}: instantiate \verb$Bundle$ subclass: \newline
-\verb$val my_bundle = new MyBundle()$
+\subsubsection{Constructor}: instantiate \verb$Bundle$ subclass:
+\begin{scala}
+val my_bundle = new MyBundle()
+\end{scala}
 \subsubsection{Inline defining}: define a \verb$Bundle$ type:
 \begin{scala}
 val my_bundle = new Bundle {
@@ -277,11 +282,14 @@ val my_bundle = new Bundle {
   val b = UInt(32.W)
 }
 \end{scala}
-\subsubsection{Using}: access elements through dot notation: \newline
-\verb$val bundleVal = my_bundle.a$ \newline
-\verb$my_bundle.a := Bool(true)$
-
-\subsection{Vec } is an indexable vector of \verb$Data$ types \newline
+\subsubsection{Using}: access elements through dot notation:
+\begin{scala}
+val bundleVal = my_bundle.a
+my_bundle.a := Bool(true)
+\end{scala}
+}
+\noindent\adjustbox{bgcolor=\highlightvec,minipage=[t]{\linewidth}}{
+\subsection{\colorbox{vec}{Vec} } is an indexable vector of \verb$Data$ types \newline
 \verb$val myVec = Vec(elts:Iterable[Data])$ \newline
 \begin{tabular}{l l l}
 & \verb$elts$ & initial element \verb$Data$ (vector depth inferred) \\
@@ -289,8 +297,8 @@ val my_bundle = new Bundle {
 
 \verb$val myVec = Vec.fill(n:Int) {gen:Data}$ \newline
 \begin{tabular}{l l l}
-& \verb$n$ & vector depth (elements) \\
-& \verb$gen$ & initial element \verb$Data$, called once per element \\
+& \verb $n$ & vector depth (elements) \\
+& \verb $gen$ & initial element \verb$Data$, called once per element \\
 \end{tabular}
 \subsubsection{Using}: access elements by dynamic or static indexing: \newline
 \verb$readVal := myVec(ind:Data/idx:Int)$ \newline
@@ -307,9 +315,11 @@ val my_bundle = new Bundle {
 & \verb$.lastIndexWhere(p:T=>Bool): UInt$ & \\
 & \verb$.onlyIndexWhere(p:T=>Bool): UInt$ & \\
 \end{tabular}
+}
 
-\section{Standard Library: Function Blocks } \hrulefill
-\subsection{Stateless}: \newline
+\section{Standard Library: Function Blocks } \hrulefill \\
+\noindent\adjustbox{bgcolor=\highlightstateless,minipage=[t]{\linewidth}}{
+\subsection{\colorbox{stateless}{Stateless}}: \newline
 \verb$PopCount(in:Bits/Seq[Bool]): UInt$ \newline
 \phantom{x} Returns number of hot (= 1) bits in \verb$in$
 
@@ -350,9 +360,11 @@ val my_bundle = new Bundle {
 & \verb$in$ & iterable of combined input and select\verb$(Bool, Bits)$\\
 & & tuples or just mux input \verb$Bits$ \\
 & \verb$sel$ & select signals or bitvector, one per input \\
-\end{tabular} \\
+\end{tabular}
+}
 
-\subsection{Stateful}: \newline
+\noindent\adjustbox{bgcolor=\highlightstateful,minipage=[t]{\linewidth}}{
+\subsection{\colorbox{stateful}{Stateful}}: \newline
 \verb$LFSR16([increment:Bool]): UInt$ \newline
 \begin{tabular}{l l l}
 & \multicolumn{2}{l}{16-bit LFSR (to generate pseudorandom numbers)} \\
@@ -364,11 +376,12 @@ val my_bundle = new Bundle {
 & \multicolumn{2}{l}{Shift register, returns \texttt{n}-cycle delayed input \texttt{in}} \\
 & \verb$en$ & {\em(optional, default True)} enable \\
 \end{tabular}
+}
 \vfill
 
 \section{Standard Library: Interfaces } \hrulefill \\
 \noindent\adjustbox{bgcolor=\highlightdecoupledio,minipage=[t]{\linewidth}}{
-\subsection{DecoupledIO } \mbox{is a \texttt{Bundle} with a ready-valid interface}
+\subsection{\colorbox{decoupledio}{DecoupledIO} } \mbox{is a \texttt{Bundle} with a ready-valid interface}
 \subsubsection{Constructor}: \newline
 \verb$Decoupled(gen:Data)$ \newline
 \begin{tabular}{l l l}
@@ -383,7 +396,7 @@ val my_bundle = new Bundle {
 }
 
 \noindent\adjustbox{bgcolor=\highlightvalidio,minipage=[t]{\linewidth}}{
-\subsection{ValidIO } is a \verb$Bundle$ with a valid interface
+\subsection{\colorbox{validio}{ValidIO} } is a \verb$Bundle$ with a valid interface
 \subsubsection{Constructor}: \newline
 \verb$Valid(gen:Data)$ \newline
 \begin{tabular}{l l l}
@@ -397,7 +410,7 @@ val my_bundle = new Bundle {
 }
 
 \noindent\adjustbox{bgcolor=\highlightqueue,minipage=[t]{\linewidth}}{
-\subsection{Queue } is a \verb$Module$ providing a hardware queue
+\subsection{\colorbox{queue}{Queue} } is a \verb$Module$ providing a hardware queue
 \subsubsection{Constructor}: \newline
 \verb$Queue(enq:DecoupledIO, entries:Int)$ \newline
 \begin{tabular}{l l l}
@@ -413,7 +426,7 @@ val my_bundle = new Bundle {
 }
 
 \noindent\adjustbox{bgcolor=\highlightpipe,minipage=[t]{\linewidth}}{
-\subsection{Pipe }is a \verb$Module$ delaying input data
+\subsection{\colorbox{pipe}{Pipe} }is a \verb$Module$ delaying input data
 \subsubsection{Constructor}: \newline
 \verb$Pipe(enqValid:Bool, enqBits:Data, [latency:Int])$ \newline
 \verb$Pipe(enq:ValidIO, [latency:Int])$ \newline
@@ -431,7 +444,7 @@ val my_bundle = new Bundle {
 }
 
 \noindent\adjustbox{bgcolor=\highlightarbiters,minipage=[t]{\linewidth}}{
-\subsection{Arbiters } are \verb$Module$s connecting multiple producers\newline
+\subsection{\colorbox{arbiters}{Arbiters} } are \verb$Module$s connecting multiple producers\newline
 \phantom{x} to one consumer \newline
 \verb$Arbiter$ prioritizes lower producers \newline
 \verb$RRArbiter$ runs in round-robin order
