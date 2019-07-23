@@ -3,12 +3,16 @@
 \usepackage[landscape]{geometry}
 \usepackage[procnames]{listings}
 \usepackage[parfill]{parskip}
-\usepackage{fixltx2e}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{graphicx}
-
+\usepackage{adjustbox}
+\usepackage[table]{xcolor}
+\usepackage{mdframed}
 \input{scala.tex}
+\input{colors.tex}
+
+\pagecolor{pagecolor}
 
 % Remove section numbering
 \setcounter{secnumdepth}{0}
@@ -45,7 +49,7 @@
 Version 0.5 (beta): \today
 \end{center}
 
-\fbox{ \parbox{0.95\columnwidth} {
+\fcolorbox{red}{yellow}{ \parbox{0.95\columnwidth} {
 \subsection{Notation In This Document}:
 \subsubsection{For Functions and Constructors}: \newline
 Arguments given as \texttt{kwd:type} (name and type(s)) \newline
@@ -109,7 +113,8 @@ switch(x) {
 
 \columnbreak
 
-\section{Basic Data Types } \hrulefill
+\section{Basic Data Types} \hrulefill \\
+\noindent\adjustbox{bgcolor=blue!20,minipage=[t]{\linewidth}}{
 \subsubsection{Constructors}: \newline
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l}
 \verb$Bool()$ & type, boolean value \\
@@ -127,6 +132,9 @@ switch(x) {
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l l}
 \verb$UInt$ $\rightarrow$ \verb$SInt$ & Zero-extend to SInt & \\
 \end{tabular*}
+}
+
+
 
 \section{State Elements } \hrulefill\
 \subsection{Registers } retain state until updated \newline
@@ -174,11 +182,12 @@ val sum := my_module.io.out
 
 \columnbreak
 
-\subsubsection{Operators}: \newline
+\subsubsection{Operators}: \newline \newline
+{
+\rowcolors{2}{rowcolor}{rowlightcolor}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l l}
+\rowcolor{tablekeyscolor}
 Chisel & Explanation & Width \\
-\hline
-\hline
 \verb$!x$ & Logical NOT & \verb$1$ \\
 \verb$x && y$ & Logical AND & \verb$1$ \\
 \verb$x || y$ & Logical OR & \verb$1$ \\
@@ -220,20 +229,22 @@ Chisel & Explanation & Width \\
 \verb$x >> y$ & Arithmetic right shift & \verb$w(x) - minVal(y)$ \\
 \verb$x >> n$ & Arithmetic right shift & \verb$w(x) - n$ \\
 \end{tabular*}
+}
 
-\subsubsection{UInt bit-reduction methods}: \newline
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l l}
+\subsubsection{UInt bit-reduction methods}: \newline \newline
+{\rowcolors{2}{rowcolor}{rowlightcolor}
+\begin{tabular*}{\columnwidth}{ l l l}
+\rowcolor{tablekeyscolor}
 Chisel & Explanation & Width \\
-\hline
-\hline
 \verb$x.andR$ & AND-reduce & \verb$1$ \\
 \verb$x.orR$ & OR-reduce & \verb$1$ \\
 \verb$x.xorR$ & XOR-reduce & \verb$1$ \\
 \end{tabular*}
+}
  \newline
 As an example to apply the andR method to an SInt use
 x.asUInt.andR
- \newline \newline \newline
+ \newline \newline
 \columnbreak
 
 \section{Hardware Generation } \hrulefill
@@ -323,20 +334,23 @@ val my_bundle = new Bundle {
 
 \verb$PriorityEncoderOH(in:Bits): UInt$ \newline
 \phantom{x} Returns the position of the hot bit in \verb$in$
-
+\\
+\\
+{\color{blue}
 \verb$Mux1H(in:Iterable[(Data, Bool]): Data$ \newline
 \verb$Mux1H(sel:Bits/Iterable[Bool],$ \newline
 \verb$      in:Iterable[Data]): Data$ \newline
 \verb$PriorityMux(in:Iterable[(Bool, Bits]): Bits$ \newline
 \verb$PriorityMux(sel:Bits/Iterable[Bool],$ \newline
-\verb$                  in:Iterable[Bits]): Bits$ \newline
+\verb$            in:Iterable[Bits]): Bits$ \newline
+}
 \begin{tabular}{l l l}
 & \multicolumn{2}{l}{A mux tree with either a one-hot select or multiple} \\
 & \multicolumn{2}{l}{\phantom{x} selects (where the first inputs are prioritized)} \\
-& \verb$in$ & iterable of combined input and select \verb$(Bool, Bits)$ \\
+& \verb$in$ & iterable of combined input and select\verb$(Bool, Bits)$\\
 & & tuples or just mux input \verb$Bits$ \\
 & \verb$sel$ & select signals or bitvector, one per input \\
-\end{tabular}
+\end{tabular} \\
 
 \subsection{Stateful}: \newline
 \verb$LFSR16([increment:Bool]): UInt$ \newline
@@ -350,8 +364,10 @@ val my_bundle = new Bundle {
 & \multicolumn{2}{l}{Shift register, returns \texttt{n}-cycle delayed input \texttt{in}} \\
 & \verb$en$ & {\em(optional, default True)} enable \\
 \end{tabular}
+\vfill
 
-\section{Standard Library: Interfaces } \hrulefill
+\section{Standard Library: Interfaces } \hrulefill \\
+\noindent\adjustbox{bgcolor=\highlightdecoupledio,minipage=[t]{\linewidth}}{
 \subsection{DecoupledIO } \mbox{is a \texttt{Bundle} with a ready-valid interface}
 \subsubsection{Constructor}: \newline
 \verb$Decoupled(gen:Data)$ \newline
@@ -364,7 +380,9 @@ val my_bundle = new Bundle {
 & (out) & \verb$.valid$ & valid \verb$Bool$ \\
 & (out) & \verb$.bits$ & data \\
 \end{tabular}
+}
 
+\noindent\adjustbox{bgcolor=\highlightvalidio,minipage=[t]{\linewidth}}{
 \subsection{ValidIO } is a \verb$Bundle$ with a valid interface
 \subsubsection{Constructor}: \newline
 \verb$Valid(gen:Data)$ \newline
@@ -376,7 +394,9 @@ val my_bundle = new Bundle {
 & (out) & \verb$.valid$ & valid \verb$Bool$ \\
 & (out) & \verb$.bits$ & data \\
 \end{tabular}
+}
 
+\noindent\adjustbox{bgcolor=\highlightqueue,minipage=[t]{\linewidth}}{
 \subsection{Queue } is a \verb$Module$ providing a hardware queue
 \subsubsection{Constructor}: \newline
 \verb$Queue(enq:DecoupledIO, entries:Int)$ \newline
@@ -390,8 +410,10 @@ val my_bundle = new Bundle {
 & \verb$.io.deq$ & \verb$DecoupledIO$ sink \\
 & \verb$.io.count$ & \verb$UInt$ count of elements in the queue \\
 \end{tabular}
+}
 
-\subsection{Pipe } is a \verb$Module$ delaying input data
+\noindent\adjustbox{bgcolor=\highlightpipe,minipage=[t]{\linewidth}}{
+\subsection{Pipe }is a \verb$Module$ delaying input data
 \subsubsection{Constructor}: \newline
 \verb$Pipe(enqValid:Bool, enqBits:Data, [latency:Int])$ \newline
 \verb$Pipe(enq:ValidIO, [latency:Int])$ \newline
@@ -406,7 +428,9 @@ val my_bundle = new Bundle {
 & \verb$.io.enq$ & \verb$ValidIO$ source (flipped) \\
 & \verb$.io.deq$ & \verb$ValidIO$ sink \\
 \end{tabular}
+}
 
+\noindent\adjustbox{bgcolor=\highlightarbiters,minipage=[t]{\linewidth}}{
 \subsection{Arbiters } are \verb$Module$s connecting multiple producers\newline
 \phantom{x} to one consumer \newline
 \verb$Arbiter$ prioritizes lower producers \newline
@@ -424,6 +448,7 @@ val my_bundle = new Bundle {
 & \verb$.io.chosen$ & \verb$UInt$ input index on \verb$.io.out$, \\
 & & does not imply output is valid \\
 \end{tabular}
+}
 
 \end{multicols}
 \end{document}
