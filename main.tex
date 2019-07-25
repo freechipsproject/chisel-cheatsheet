@@ -136,8 +136,9 @@ switch(x) {
 
 
 
-\section{State Elements } \hrulefill\
-\subsection{Registers } retain state until updated \newline
+\section{State Elements } \hrulefill \\
+\noindent\adjustbox{bgcolor=\highlightstatelements,minipage=[t]{\linewidth}}{
+\subsection{\colorbox{registers}{Registers} } retain state until updated \newline
 \verb$val my_reg = Reg(UInt(32.W))$ \newline
 Flavors \newline
 \begin{tabular}{l l l}
@@ -148,7 +149,7 @@ Flavors \newline
 \subsubsection{Updating}: assign to latch new value on next clock: \newline
 \verb$my_reg := next_val$
 
-\subsection{Read-Write Memory } provide addressable memories \newline
+\subsection{\colorbox{readwritemem}{Read-Write Memory} } provide addressable memories \newline
 \verb$val my_mem = Mem(n:Int, out:Data)$ \newline
 \begin{tabular}{l l l}
 & \verb$out$ & memory element type \\
@@ -158,6 +159,7 @@ Flavors \newline
 \verb$val readVal = my_mem(addr:UInt/Int)$ \newline
 \phantom{x} for synchronous read: assign output to \verb$Reg$ \newline
 \verb$mu_mem(addr:UInt/Int) := y$
+}
 
 \section{Modules } \hrulefill
 \subsubsection{Defining}: subclass \verb$Module$ with elements, code:
@@ -260,7 +262,6 @@ val number = Reg(if(can_be_negative) SInt()
 will create a Register of type SInt or UInt depending on the value of a
 Scala variable
 }
-
 \section{Aggregate Types } \hrulefill \\
 \noindent\adjustbox{bgcolor=\highlightbundle,minipage=[t]{\linewidth}}{
 \subsection{\colorbox{bundle}{Bundle} } contains \verb$Data$ types indexed by name
@@ -289,20 +290,27 @@ my_bundle.a := Bool(true)
 \end{scala}
 }
 \noindent\adjustbox{bgcolor=\highlightvec,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{vec}{Vec} } is an indexable vector of \verb$Data$ types \newline
-\verb$val myVec = Vec(elts:Iterable[Data])$ \newline
+\subsection{\colorbox{vec}{Vec} } is an indexable vector of \verb$Data$ types
+\begin{scala}
+val myVec = Vec(elts:Iterable[Data])
+\end{scala}
 \begin{tabular}{l l l}
-& \verb$elts$ & initial element \verb$Data$ (vector depth inferred) \\
+& \verb$elts$ & initial element \verb$Data$ (vector depth inferred)
 \end{tabular}
-
-\verb$val myVec = Vec.fill(n:Int) {gen:Data}$ \newline
+\begin{scala}
+val myVec = Vec.fill(n:Int) {gen:Data}
+\end{scala}
+\vspace{-0.5em}
 \begin{tabular}{l l l}
-& \verb $n$ & vector depth (elements) \\
-& \verb $gen$ & initial element \verb$Data$, called once per element \\
+& \verb$n$ & vector depth (elements) \\
+& \verb$gen$ & initial element \verb$Data$, called once per element
 \end{tabular}
-\subsubsection{Using}: access elements by dynamic or static indexing: \newline
-\verb$readVal := myVec(ind:Data/idx:Int)$ \newline
-\verb$myVec(ind:Data/idx:Int) := writeVal$
+\subsubsection{Using}: access elements by dynamic or static indexing:
+\begin{scala}
+readVal := myVec(ind:Data/idx:Int)
+myVec(ind:Data/idx:Int) := writeVal
+\end{scala}
+\vspace{-0.4em}
 \subsubsection{Functions}: (\verb$T$ is the \verb$Vec$ element's type) \newline
 \begin{tabular}{l l l}
 & \verb$.forall(p:T=>Bool): Bool$ & AND-reduce \verb$p$ on all elts \\
@@ -370,15 +378,12 @@ my_bundle.a := Bool(true)
 & \multicolumn{2}{l}{16-bit LFSR (to generate pseudorandom numbers)} \\
 & \verb$increment$ & {\em(optional, default True)} shift on next clock \\
 \end{tabular}
-
 \verb$ShiftRegister(in:Data, n:Int, [en:Bool]): Data$ \newline
 \begin{tabular}{l l l}
 & \multicolumn{2}{l}{Shift register, returns \texttt{n}-cycle delayed input \texttt{in}} \\
 & \verb$en$ & {\em(optional, default True)} enable \\
 \end{tabular}
 }
-\vfill
-
 \section{Standard Library: Interfaces } \hrulefill \\
 \noindent\adjustbox{bgcolor=\highlightdecoupledio,minipage=[t]{\linewidth}}{
 \subsection{\colorbox{decoupledio}{DecoupledIO} } \mbox{is a \texttt{Bundle} with a ready-valid interface}
