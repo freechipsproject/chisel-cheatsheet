@@ -1,9 +1,16 @@
-\documentclass{minimal}
+
 % "define" Scala
 \usepackage[T1]{fontenc}
 \usepackage{microtype}
+\usepackage{xcolor}
 
-\input{colors.tex}
+\colorlet{codebgcolor}{green!20}
+\definecolor{commentcolor}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{stringcolor}{rgb}{0.58,0,0.82}
+\definecolor{light-gray}{gray}{0.75}
+\definecolor{keywordcolor}{rgb}{0,0,1}
+\definecolor{procnamecolor}{rgb}{1,0,0}
 
 \sbox0{\small\ttfamily A}
 \edef\mybasewidth{\the\wd0 }
@@ -39,7 +46,7 @@
   breakatwhitespace=true,
   procnamekeys={def, val, var, class, trait, object, extends},
   procnamestyle=\ttfamily\color{procnamecolor},
-  frame=single,
+  frame=none,
   rulecolor=\color{light-gray},
   xleftmargin=0mm,
   aboveskip=2pt,

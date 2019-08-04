@@ -10,9 +10,13 @@
 \usepackage[table]{xcolor}
 \usepackage{mdframed}
 \input{scala.tex}
-\input{colors.tex}
 
-\pagecolor{pagecolor}
+\pagecolor{white}
+
+% Color Pallete
+\colorlet{tablekeyscolor}{green!90!yellow!60}
+\colorlet{rowcolor}{green!80!yellow!50}
+\colorlet{rowlightcolor}{green!70!yellow!40}
 
 % Remove section numbering
 \setcounter{secnumdepth}{0}
@@ -44,6 +48,8 @@
 \newcommand*\ruleline[1]{\par\noindent\raisebox{.8ex}{\makebox[\linewidth]{\hrulefill\hspace{1ex}\raisebox{-.8ex}{#1}\hspace{1ex}\hrulefill}}}
 \renewcommand{\tabcolsep}{.5mm}
 
+\newcommand*\highlightbox[2]{\noindent\adjustbox{bgcolor=#1,minipage=[t]{\linewidth}}{ #2 }}
+
 \ruleline{\Large{\textbf{Chisel3 Cheat Sheet}}}
 \begin{center}
 Version 0.5 (beta): \today
@@ -70,8 +76,8 @@ val x = Wire(UInt())
 x := y	// Connect wire y to wire x
 \end{scala}
 
-\subsection{When } executes blocks conditionally by \verb$Bool$, \newline
-\phantom{x} and is equivalent to Verilog \verb$if$
+\subsection{When } executes blocks conditionally by \lstinline|Bool|, \newline
+\phantom{x} and is equivalent to Verilog \lstinline|if|
 \begin{scala}
 when(condition1) {
   // run if condition1 true and skip rest
@@ -95,74 +101,77 @@ switch(x) {
 \end{scala}
 
 \subsection{Enum } generates value literals for enumerations \newline
-\verb$val s1::s2::$ ... \verb$::sn::Nil$ \newline
-\verb$    = Enum(nodeType:UInt, n:Int)$ \newline
+\lstinline|val s1::s2::| ... \lstinline|::sn::Nil| \newline
+\lstinline|    = Enum(nodeType:UInt, n:Int)| \newline
 \begin{tabular}{l l l}
-& \verb$s1$, \verb$s2$, ..., \verb$sn$ & will be created as \verb$nodeType$ literals \\
+& \lstinline|s1|, \lstinline|s2|, ..., \lstinline|sn| & will be created as \lstinline|nodeType| literals \\
 & & with distinct values \\
-& \verb$nodeType$ & type of \verb$s1$, \verb$s2$, ..., \verb$sn$ \\
-& \verb$n$ & element count \\
+& \lstinline|nodeType| & type of \lstinline|s1|, \lstinline|s2|, ..., \lstinline|sn| \\
+& \lstinline|n| & element count \\
 \end{tabular}
 
 \subsection{Math Helpers}: \newline
-\begin{tabular}{l l}
-\verb$log2Ceil(in:Int): Int$ & $log_2(\texttt{in})$ rounded up \\
-\verb$log2Floor(in:Int): Int$ & $log_2(\texttt{in})$ rounded down \\
-\verb$isPow2(in:Int): Boolean$ & \verb$True$ if \verb$in$ is a power of 2 \\
-\end{tabular}
+    \begin{tabular}{l l}
+        \lstinline|log2Ceil(in:Int): Int| & $log_2(\texttt{in})$ rounded up \\
+        \lstinline|log2Floor(in:Int): Int| & $log_2(\texttt{in})$ rounded down \\
+        \lstinline|isPow2(in:Int): Boolean| & \lstinline|True| if \lstinline|in| is a power of 2 \\
+    \end{tabular}
 
 \columnbreak
 
 \section{Basic Data Types} \hrulefill \\
-\noindent\adjustbox{bgcolor=blue!20,minipage=[t]{\linewidth}}{
-\subsubsection{Constructors}: \newline
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l}
-\verb$Bool()$ & type, boolean value \\
-\verb$true.B$ or \verb$false.B$ & literal values \\
-\verb$UInt(32.W)$ & type 32-bit unsigned \\
-\verb$UInt()$ & type, width inferred \\
-\verb$77.U$ or \verb$"hdead".U$ & unsigned literals \\
-\verb$1.U(16.W)$ & literal with forced width \\
-\verb$SInt()$ or \verb$SInt(64.W)$ & like UInt \\
-\verb$-3.S$  or \verb$"h-44".S$ & signed literals \\
-\verb$3.S(2.W)$ & signed 2-bits wide {\em value -1} \\
-\end{tabular*}
-
-\subsubsection{Bits, UInt, SInt Casts}: reinterpret cast except for:\newline
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l l}
-\verb$UInt$ $\rightarrow$ \verb$SInt$ & Zero-extend to SInt & \\
-\end{tabular*}
+\highlightbox{blue!30}{
+    \subsubsection{Constructors}: \newline
+        \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l}
+            \lstinline|Bool()| & type, boolean value \\
+            \lstinline|true.B| or \lstinline|false.B| & literal values \\
+            \lstinline|UInt(32.W)| & type 32-bit unsigned \\
+            \lstinline|UInt()| & type, width inferred \\
+            \lstinline|77.U| or \lstinline|"hdead".U| & unsigned literals \\
+            \lstinline|1.U(16.W)| & literal with forced width \\
+            \lstinline|SInt()| or \lstinline|SInt(64.W)| & like UInt \\
+            \lstinline|-3.S|  or \lstinline|"h-44".S| & signed literals \\
+            \lstinline|3.S(2.W)| & signed 2-bits wide {\em value -1} \\
+        \end{tabular*}
+    %
+    \subsubsection{Bits, UInt, SInt Casts}: reinterpret cast except for:\newline
+        \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l l}
+            \lstinline|UInt -->| \lstinline|SInt| & Zero-extend to SInt & \\
+        \end{tabular*}
 }
 
 
 
 \section{State Elements } \hrulefill \\
-\noindent\adjustbox{bgcolor=\highlightstatelements,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{registers}{Registers} } retain state until updated \newline
-\verb$val my_reg = Reg(UInt(32.W))$ \newline
-Flavors \newline
-\begin{tabular}{l l l}
-& \verb$RegInit(7.U(32.w))$ & reg with initial value 7 \\
-& \verb$RegNext(next_val)$ & update each clock, no init\\
-& \verb$RegEnable(next, enable)$ & update, with enable gate \\
-\end{tabular}
-\subsubsection{Updating}: assign to latch new value on next clock: \newline
-\verb$my_reg := next_val$
-
-\subsection{\colorbox{readwritemem}{Read-Write Memory} } provide addressable memories \newline
-\verb$val my_mem = Mem(n:Int, out:Data)$ \newline
-\begin{tabular}{l l l}
-& \verb$out$ & memory element type \\
-& \verb$n$ & memory depth (elements) \\
-\end{tabular}
-\subsubsection{Using}: access elements by indexing: \newline
-\verb$val readVal = my_mem(addr:UInt/Int)$ \newline
-\phantom{x} for synchronous read: assign output to \verb$Reg$ \newline
-\verb$mu_mem(addr:UInt/Int) := y$
+\highlightbox{blue!30}{
+    %
+    \subsection{Registers } retain state until updated \newline
+        \lstinline[columns=fixed]|val my_reg = Reg(UInt(32.W))| \newline
+        Flavors \newline
+        \begin{tabular}{l l l}
+            & \lstinline|RegInit(7.U(32.w))| & reg with initial value 7 \\
+            & \lstinline|RegNext(next_val)| & update each clock, no init\\
+            & \lstinline|RegEnable(next,enable)| & update, with enable gate \\
+        \end{tabular}
+    %
+    \subsubsection{Updating}: assign to latch new value on next clock: \newline
+        \lstinline|my_reg := next_val|
+    %
+    \subsection{Read-Write Memory } provide addressable memories \newline
+        \lstinline|val my_mem = Mem(n:Int, out:Data)| \newline
+        \begin{tabular}{l l l}
+            & \lstinline|out| & memory element type \\
+            & \lstinline|n| & memory depth (elements) \\
+        \end{tabular}
+    %
+    \subsubsection{Using}: access elements by indexing: \newline
+        \lstinline|val readVal = my_mem(addr:UInt/Int)| \newline
+        \phantom{x} for synchronous read: assign output to \lstinline[columns=fixed]|Reg| \newline
+        \lstinline|mu_mem(addr:UInt/Int) := y|
 }
 
 \section{Modules } \hrulefill
-\subsubsection{Defining}: subclass \verb$Module$ with elements, code:
+\subsubsection{Defining}: subclass \lstinline|Module| with elements, code:
 \begin{scala}
 class Accum(width:Int) extends Module {
   val io = IO(new Bundle {
@@ -175,7 +184,7 @@ class Accum(width:Int) extends Module {
 }
 \end{scala}
 \subsubsection{Usage}: access elements using dot notation: \newline
-\phantom{x} (code inside a \verb$Module$ is always running)
+\phantom{x} (code inside a \lstinline|Module| is always running)
 \begin{scala}
 val my_module = Module(new Accum(32))
 my_module.io.in := some_data
@@ -190,57 +199,57 @@ val sum := my_module.io.out
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l l}
 \rowcolor{tablekeyscolor}
 Chisel & Explanation & Width \\
-\verb$!x$ & Logical NOT & \verb$1$ \\
-\verb$x && y$ & Logical AND & \verb$1$ \\
-\verb$x || y$ & Logical OR & \verb$1$ \\
+\lstinline|!x| & Logical NOT & \lstinline|1| \\
+\lstinline|x && y| & Logical AND & \lstinline|1| \\
+\lstinline|x || y| & Logical OR & \lstinline|1| \\
 \hline
-\verb$x(n)$ & Extract bit, \verb$0$ is LSB & \verb$1$ \\
-\verb$x(n, m)$ & Extract bitfield & \verb$n - m + 1$ \\
-\verb$x << y$ & Dynamic left shift & \verb$w(x) + maxVal(y)$ \\
-\verb$x >> y$ & Dynamic right shift & \verb$w(x) - minVal(y)$ \\
-\verb$x << n$ & Static left shift & \verb$w(x) + n$ \\
-\verb$x >> n$ & Static right shift & \verb$w(x) - n$ \\
-\verb$Fill(n, x)$ & Replicate \verb$x$, \verb$n$ times & \verb$n * w(x)$ \\
-\verb$Cat(x, y)$ & Concatenate bits & \verb$w(x) + w(y)$ \\
-\verb$Mux(c, x, y)$ & If \verb$c$, then \verb$x$; else \verb$y$ & \verb$max(w(x), w(y))$ \\
+\lstinline|x(n)| & Extract bit, \lstinline|0| is LSB & \lstinline|1| \\
+\lstinline|x(n, m)| & Extract bitfield & \lstinline|n - m + 1| \\
+\lstinline|x << y| & Dynamic left shift & \lstinline|w(x) + maxVal(y)| \\
+\lstinline|x >> y| & Dynamic right shift & \lstinline|w(x) - minVal(y)| \\
+\lstinline|x << n| & Static left shift & \lstinline|w(x) + n| \\
+\lstinline|x >> n| & Static right shift & \lstinline|w(x) - n| \\
+\lstinline|Fill(n, x)| & Replicate \lstinline|x|, \lstinline|n| times & \lstinline|n * w(x)| \\
+\lstinline|Cat(x, y)| & Concatenate bits & \lstinline|w(x) + w(y)| \\
+\lstinline|Mux(c, x, y)| & If \lstinline|c|, then \lstinline|x|; else \lstinline|y| & \lstinline|max(w(x), w(y))| \\
 \hline
-\verb$~x$ & Bitwise NOT & \verb$w(x)$ \\
-\verb$x & y$ & Bitwise AND & \verb$max(w(x), w(y))$ \\
-\verb$x | y$ & Bitwise OR & \verb$max(w(x), w(y))$ \\
-\verb$x ^ y$ & Bitwise XOR & \verb$max(w(x), w(y))$ \\
+\lstinline|~x| & Bitwise NOT & \lstinline|w(x)| \\
+\lstinline|x & y| & Bitwise AND & \lstinline|max(w(x), w(y))| \\
+\lstinline|x | y| & Bitwise OR & \lstinline|max(w(x), w(y))| \\
+\lstinline|x ^ y| & Bitwise XOR & \lstinline|max(w(x), w(y))| \\
 \hline
-\verb$x === y$ & Equality{\small\textcolor{red}{(triple equals)}} & \verb$1$ \\
-\verb$x != y$ & Inequality & \verb$1$ \\
-\verb$x =/= y$ & Inequality & \verb$1$ \\
+\lstinline|x === y| & Equality{\small\textcolor{red}{(triple equals)}} & \lstinline|1| \\
+\lstinline|x != y| & Inequality & \lstinline|1| \\
+\lstinline|x =/= y| & Inequality & \lstinline|1| \\
 \hline
-\verb$x + y$ & Addition & \verb$max(w(x),w(y))$ \\
-\verb$x +% y$ & Addition & \verb$max(w(x),w(y))$ \\
-\verb$x +& y$ & Addition & \verb$max(w(x),w(y))+1$ \\
-\verb$x - y$ & Subtraction & \verb$max(w(x),w(y))$ \\
-\verb$x -% y$ & Subtraction & \verb$max(w(x),w(y))$ \\
-\verb$x -& y$ & Subtraction & \verb$max(w(x),w(y))+1$ \\
-\verb$x * y$ & Multiplication & \verb$w(x)+w(y)$ \\
-\verb$x / y$ & Division & \verb$w(x)$ \\
-\verb$x % y$ & Modulus & \verb$bits(maxVal(y)-1)$ \\
+\lstinline|x + y| & Addition & \lstinline|max(w(x),w(y))| \\
+\lstinline|x +% y| & Addition & \lstinline|max(w(x),w(y))| \\
+\lstinline|x +& y| & Addition & \lstinline|max(w(x),w(y))+1| \\
+\lstinline|x - y| & Subtraction & \lstinline|max(w(x),w(y))| \\
+\lstinline|x -% y| & Subtraction & \lstinline|max(w(x),w(y))| \\
+\lstinline|x -& y| & Subtraction & \lstinline|max(w(x),w(y))+1| \\
+\lstinline|x * y| & Multiplication & \lstinline|w(x)+w(y)| \\
+\lstinline|x / y| & Division & \lstinline|w(x)| \\
+\lstinline|x % y| & Modulus & \lstinline|bits(maxVal(y)-1)| \\
 \hline
-\verb$x > y$ & Greater than & \verb$1$ \\
-\verb$x >= y$ & Greater than or equal & \verb$1$ \\
-\verb$x < y$ & Less than & \verb$1$ \\
-\verb$x <= y$ & Less than or equal & \verb$1$ \\
+\lstinline|x > y| & Greater than & \lstinline|1| \\
+\lstinline|x >= y| & Greater than or equal & \lstinline|1| \\
+\lstinline|x < y| & Less than & \lstinline|1| \\
+\lstinline|x <= y| & Less than or equal & \lstinline|1| \\
 \hline
-\verb$x >> y$ & Arithmetic right shift & \verb$w(x) - minVal(y)$ \\
-\verb$x >> n$ & Arithmetic right shift & \verb$w(x) - n$ \\
+\lstinline|x >> y| & Arithmetic right shift & \lstinline|w(x) - minVal(y)| \\
+\lstinline|x >> n| & Arithmetic right shift & \lstinline|w(x) - n| \\
 \end{tabular*}
 }
 
 \subsubsection{UInt bit-reduction methods}: \newline \newline
 {\rowcolors{2}{rowcolor}{rowlightcolor}
-\begin{tabular*}{\columnwidth}{ l l l}
+\begin{tabular*}{\columnwidth}{ l l c}
 \rowcolor{tablekeyscolor}
 Chisel & Explanation & Width \\
-\verb$x.andR$ & AND-reduce & \verb$1$ \\
-\verb$x.orR$ & OR-reduce & \verb$1$ \\
-\verb$x.xorR$ & XOR-reduce & \verb$1$ \\
+\lstinline|x.andR  | & AND-reduce    & \lstinline|1| \\
+\lstinline|x.orR   | & OR-reduce     & \lstinline|1| \\
+\lstinline|x.xorR  | & XOR-reduce    & \lstinline|1| \\
 \end{tabular*}
 }
  \newline
@@ -249,223 +258,215 @@ x.asUInt.andR
  \newline \newline
 \columnbreak
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Hardware Generation } \hrulefill \\
-\noindent\adjustbox{bgcolor=\highlighthardware,minipage=[t]{\linewidth}}{
-\subsection{Functions } provide block abstractions for code.  Scala
-functions that instantiate or return Chisel types are code generators.
-\subsection{Also}: Scala's \verb$if$ and \verb$for$ can be used to control hardware generation
-and are equivalent to Verilog \verb$generate if$/\verb$for$
-\begin{scala}
-val number = Reg(if(can_be_negative) SInt()
-                 else UInt())
-\end{scala}
-will create a Register of type SInt or UInt depending on the value of a
-Scala variable
+\highlightbox{rowcolor}{
+    \subsection{Functions } provide block abstractions for code.  Scala
+    functions that instantiate or return Chisel types are code generators.
+    \subsection{Also}: Scala's \lstinline|if| and \lstinline|for| can be used to control hardware generation
+    and are equivalent to Verilog \lstinline|generate if|/\lstinline|for|
+    \begin{scala}^^J
+        val number=Reg(if(can_be_negative) SInt()^^J
+                       else UInt())^^J
+    \end{scala}
+    will create a Register of type SInt or UInt depending on the value of a \\
+    Scala variable
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Aggregate Types } \hrulefill \\
-\noindent\adjustbox{bgcolor=\highlightbundle,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{bundle}{Bundle} } contains \verb$Data$ types indexed by name
-\subsubsection{Defining}: subclass \verb$Bundle$, define components:
-\begin{scala}
-class MyBundle extends Bundle {
-  val a = Bool()
-  val b = UInt(32.W)
+\highlightbox{rowlightcolor}{
+    \subsection{Bundle } contains \lstinline|Data| types indexed by name
+        \subsubsection{Defining}: subclass \lstinline|Bundle|, define components:
+        \begin{scala}^^J
+            class MyBundle extends Bundle \{^^J
+            \ \ val a = Bool()^^J
+            \ \ val b = UInt(32.W)^^J
+            \}^^J
+        \end{scala}
+        \subsubsection{Constructor}: instantiate \lstinline|Bundle| subclass:\\
+            \lstinline|val my_bundle = new MyBundle()|
+        \subsubsection{Inline defining}: define a \lstinline|Bundle| type:
+        \begin{scala}^^J
+            val my_bundle = new Bundle \{ ^^J
+            \ \ val a = Bool()^^J
+            \ \ val b = UInt(32.W)^^J
+            \} ^^J
+        \end{scala}
+        \subsubsection{Using}: access elements through dot notation:
+        \begin{scala}^^J
+            val bundleVal = my_bundle.a^^J
+            my_bundle.a := Bool(true)^^J
+        \end{scala}
 }
-\end{scala}
-\subsubsection{Constructor}: instantiate \verb$Bundle$ subclass:
-\begin{scala}
-val my_bundle = new MyBundle()
-\end{scala}
-\subsubsection{Inline defining}: define a \verb$Bundle$ type:
-\begin{scala}
-val my_bundle = new Bundle {
-  val a = Bool()
-  val b = UInt(32.W)
-}
-\end{scala}
-\subsubsection{Using}: access elements through dot notation:
-\begin{scala}
-val bundleVal = my_bundle.a
-my_bundle.a := Bool(true)
-\end{scala}
-}
-\noindent\adjustbox{bgcolor=\highlightvec,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{vec}{Vec} } is an indexable vector of \verb$Data$ types
-\begin{scala}
-val myVec = Vec(elts:Iterable[Data])
-\end{scala}
-\begin{tabular}{l l l}
-& \verb$elts$ & initial element \verb$Data$ (vector depth inferred)
-\end{tabular}
-\begin{scala}
-val myVec = Vec.fill(n:Int) {gen:Data}
-\end{scala}
-\vspace{-0.5em}
-\begin{tabular}{l l l}
-& \verb$n$ & vector depth (elements) \\
-& \verb$gen$ & initial element \verb$Data$, called once per element
-\end{tabular}
-\subsubsection{Using}: access elements by dynamic or static indexing:
-\begin{scala}
-readVal := myVec(ind:Data/idx:Int)
-myVec(ind:Data/idx:Int) := writeVal
-\end{scala}
-\vspace{-0.4em}
-\subsubsection{Functions}: (\verb$T$ is the \verb$Vec$ element's type) \newline
-\begin{tabular}{l l l}
-& \verb$.forall(p:T=>Bool): Bool$ & AND-reduce \verb$p$ on all elts \\
-& \verb$.exists(p:T=>Bool): Bool$ & OR-reduce \verb$p$ on all elts \\
-& \verb$.contains(x:T): Bool$ & \verb$True$ if this contains \verb$x$ \\
-& \verb$.count(p:T=>Bool): UInt$ & count elts where \verb$p$ is \verb$True$ \\
-\end{tabular}
-\begin{tabular}{l l l}
-& \verb$.indexWhere(p:T=>Bool): UInt$ & \\
-& \verb$.lastIndexWhere(p:T=>Bool): UInt$ & \\
-& \verb$.onlyIndexWhere(p:T=>Bool): UInt$ & \\
-\end{tabular}
+\newline \newline
+\highlightbox{rowcolor}{
+    \subsection{Vec } is an indexable vector of \lstinline|Data| types \\
+        \lstinline|val myVec = Vec(elts:Iterable[Data])|
+        \begin{tabular}{l l l}
+            & \lstinline|elts| & initial element \lstinline|Data| (vector depth inferred)
+        \end{tabular}
+        \lstinline|val myVec = Vec.fill(n:Int) {gen:Data}|
+        \begin{tabular}{l l l}
+            & \lstinline|n| & vector depth (elements) \\
+            & \lstinline|gen| & initial element \lstinline|Data|, called once per element
+        \end{tabular}
+        \subsubsection{Using}: access elements by dynamic or static indexing: \\
+            \lstinline|readVal := myVec(ind:Data/idx:Int)|
+            \lstinline|myVec(ind:Data/idx:Int) := writeVal|
+        \subsubsection{Functions}: (\lstinline|T| is the \lstinline|Vec| element's type) \newline
+            \begin{tabular}{l l l}
+                & \lstinline|.forall(p:T=>Bool): Bool| & AND-reduce \lstinline|p| on all elts \\
+                & \lstinline|.exists(p:T=>Bool): Bool| & OR-reduce \lstinline|p| on all elts \\
+                & \lstinline|.contains(x:T): Bool| & \lstinline|True| if this contains \lstinline|x| \\
+                & \lstinline|.count(p:T=>Bool): UInt| & count elts where \lstinline|p| is \lstinline|True| \\
+            \end{tabular}
+            \begin{tabular}{l l l}
+                & \lstinline|.indexWhere(p:T=>Bool): UInt| & \\
+                & \lstinline|.lastIndexWhere(p:T=>Bool): UInt| & \\
+                & \lstinline|.onlyIndexWhere(p:T=>Bool): UInt| & \\
+            \end{tabular}
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Standard Library: Function Blocks } \hrulefill \\
-\noindent\adjustbox{bgcolor=\highlightstateless,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{stateless}{Stateless}}: \newline
-\verb$PopCount(in:Bits/Seq[Bool]): UInt$ \newline
-\phantom{x} Returns number of hot (= 1) bits in \verb$in$
-
-\verb$Reverse(in:UInt): UInt$ \newline
-\phantom{x} Reverses the bit order of \verb$in$
-
-\verb$UIntToOH(in:UInt, [width:Int]): Bits$ \newline
-\begin{tabular}{l l l}
-& \multicolumn{2}{l}{Returns the one-hot encoding of \texttt{in}} \\
-& \verb$width$ & {\em(optional, else inferred)} output width \\
-\end{tabular}
-
-\verb$OHToUInt(in:Bits/Seq[Bool]): UInt$ \newline
-\phantom{x} Returns the \verb$UInt$ representation of one-hot \verb$in$
-
-\verb$Counter(n:Int]): UInt$ \newline
-\phantom{x} .inc() bumps counter returning true when n reached \newline
-\phantom{x} .value returns current value
-
-\verb$PriorityEncoder(in:Bits/Iterable[Bool]): UInt$ \newline
-\phantom{x} Returns the position the least significant \verb$1$ in \verb$in$
-
-\verb$PriorityEncoderOH(in:Bits): UInt$ \newline
-\phantom{x} Returns the position of the hot bit in \verb$in$
-\\
-\\
-{\color{blue}
-\verb$Mux1H(in:Iterable[(Data, Bool]): Data$ \newline
-\verb$Mux1H(sel:Bits/Iterable[Bool],$ \newline
-\verb$      in:Iterable[Data]): Data$ \newline
-\verb$PriorityMux(in:Iterable[(Bool, Bits]): Bits$ \newline
-\verb$PriorityMux(sel:Bits/Iterable[Bool],$ \newline
-\verb$            in:Iterable[Bits]): Bits$ \newline
+\highlightbox{blue!30}{
+    \subsection{Stateless}: \newline
+        \lstinline|PopCount(in:Bits/Seq[Bool]): UInt| \newline
+        \phantom{x} Returns number of hot (= 1) bits in \lstinline|in|\\
+        \lstinline|Reverse(in:UInt): UInt| \newline
+        \phantom{x} Reverses the bit order of \lstinline|in|\\
+        \lstinline|UIntToOH(in:UInt, [width:Int]): Bits| \newline
+        \begin{tabular}{l l l}
+            & \multicolumn{2}{l}{Returns the one-hot encoding of \texttt{in}} \\
+            & \lstinline|width| & {\em(optional, else inferred)} output width \\
+        \end{tabular}
+        %
+        \lstinline|OHToUInt(in:Bits/Seq[Bool]): UInt| \newline
+        \phantom{x} Returns the \lstinline|UInt| representation of one-hot \lstinline|in|\\
+        %
+        \lstinline|Counter(n:Int]): UInt| \newline
+        \phantom{x} .inc() bumps counter returning true when n reached \newline
+        \phantom{x} .value returns current value\\
+        %
+        \lstinline|PriorityEncoder(in:Bits/Iterable[Bool]): UInt| \newline
+        \phantom{x} Returns the position the least significant \lstinline|1| in \lstinline|in|\\
+        %
+        \lstinline|PriorityEncoderOH(in:Bits): UInt| \newline
+        \phantom{x} Returns the position of the hot bit in \lstinline|in|\\
+        %
+        \lstinline|Mux1H(in:Iterable[(Data, Bool]): Data| \newline
+        \lstinline|Mux1H(sel:Bits/Iterable[Bool],| \newline
+        \lstinline|\ \ \ \ \ \ in:Iterable[Data]): Data| \newline
+        \lstinline|PriorityMux(in:Iterable[(Bool, Bits]): Bits| \newline
+        \lstinline|PriorityMux(sel:Bits/Iterable[Bool],| \newline
+        \lstinline|\ \ \ \ \ \ \ \ \ \ \ \ \ in:Iterable[Bits]): Bits| \newline
+        \begin{tabular}{l l l}
+            & \multicolumn{2}{l}{A mux tree with either a one-hot select or multiple} \\
+            & \multicolumn{2}{l}{\phantom{x} selects (where the first inputs are prioritized)} \\
+            & \lstinline|in| & iterable of combined input and select\lstinline|(Bool, Bits)|\\
+            & & tuples or just mux input \lstinline|Bits| \\
+            & \lstinline|sel| & select signals or bitvector, one per input \\
+        \end{tabular}
 }
-\begin{tabular}{l l l}
-& \multicolumn{2}{l}{A mux tree with either a one-hot select or multiple} \\
-& \multicolumn{2}{l}{\phantom{x} selects (where the first inputs are prioritized)} \\
-& \verb$in$ & iterable of combined input and select\verb$(Bool, Bits)$\\
-& & tuples or just mux input \verb$Bits$ \\
-& \verb$sel$ & select signals or bitvector, one per input \\
-\end{tabular}
+\newline \newline
+\highlightbox{blue!30}{
+    \subsection{Stateful}: \newline
+        \lstinline|LFSR16([increment:Bool]): UInt| \newline
+        \begin{tabular}{l l l}
+            & \multicolumn{2}{l}{16-bit LFSR (to generate pseudorandom numbers)} \\
+            & \lstinline|increment| & {\em(optional, default True)} shift on next clock \\
+        \end{tabular}
+        \lstinline|ShiftRegister(in:Data, n:Int, [en:Bool]): Data| \newline
+        \begin{tabular}{l l l}
+            & \multicolumn{2}{l}{Shift register, returns \texttt{n}-cycle delayed input \texttt{in}} \\
+            & \lstinline|en| & {\em(optional, default True)} enable \\
+        \end{tabular}
 }
-
-\noindent\adjustbox{bgcolor=\highlightstateful,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{stateful}{Stateful}}: \newline
-\verb$LFSR16([increment:Bool]): UInt$ \newline
-\begin{tabular}{l l l}
-& \multicolumn{2}{l}{16-bit LFSR (to generate pseudorandom numbers)} \\
-& \verb$increment$ & {\em(optional, default True)} shift on next clock \\
-\end{tabular}
-\verb$ShiftRegister(in:Data, n:Int, [en:Bool]): Data$ \newline
-\begin{tabular}{l l l}
-& \multicolumn{2}{l}{Shift register, returns \texttt{n}-cycle delayed input \texttt{in}} \\
-& \verb$en$ & {\em(optional, default True)} enable \\
-\end{tabular}
-}
+\newline \newline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Standard Library: Interfaces } \hrulefill \\
-\noindent\adjustbox{bgcolor=\highlightdecoupledio,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{decoupledio}{DecoupledIO} } \mbox{is a \texttt{Bundle} with a ready-valid interface}
-\subsubsection{Constructor}: \newline
-\verb$Decoupled(gen:Data)$ \newline
-\begin{tabular}{l l l}
-& \verb$gen$ & Chisel \verb$Data$ to wrap ready-valid protocol around \\
-\end{tabular}
-\subsubsection{Interface}: \newline
-\begin{tabular}{c c l l}
-& (in) & \verb$.ready$ & ready \verb$Bool$ \\
-& (out) & \verb$.valid$ & valid \verb$Bool$ \\
-& (out) & \verb$.bits$ & data \\
-\end{tabular}
+\highlightbox{rowlightcolor}{
+    \subsection{DecoupledIO } \mbox{is a \texttt{Bundle} with a ready-valid interface}
+        \subsubsection{Constructor}: \newline
+            \lstinline|Decoupled(gen:Data)| \newline
+            \begin{tabular}{l l l}
+                & \lstinline|gen| & Chisel \lstinline|Data| to wrap ready-valid protocol around \\
+            \end{tabular}
+        \subsubsection{Interface}: \newline
+            \begin{tabular}{c c l l}
+                & (in) & \lstinline|.ready| & ready \lstinline|Bool| \\
+                & (out) & \lstinline|.valid| & valid \lstinline|Bool| \\
+                & (out) & \lstinline|.bits| & data \\
+            \end{tabular}
 }
 
-\noindent\adjustbox{bgcolor=\highlightvalidio,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{validio}{ValidIO} } is a \verb$Bundle$ with a valid interface
-\subsubsection{Constructor}: \newline
-\verb$Valid(gen:Data)$ \newline
-\begin{tabular}{l l l}
-& \verb$gen$ & Chisel \verb$Data$ to wrap valid protocol around \\
-\end{tabular}
-\subsubsection{Interface}: \newline
-\begin{tabular}{c c l l}
-& (out) & \verb$.valid$ & valid \verb$Bool$ \\
-& (out) & \verb$.bits$ & data \\
-\end{tabular}
+\highlightbox{rowcolor}{
+    \subsection{ValidIO } is a \lstinline|Bundle| with a valid interface
+        \subsubsection{Constructor}: \newline
+            \lstinline|Valid(gen:Data)| \newline
+            \begin{tabular}{l l l}
+                & \lstinline|gen| & Chisel \lstinline|Data| to wrap valid protocol around \\
+            \end{tabular}
+        \subsubsection{Interface}: \newline
+            \begin{tabular}{c c l l}
+                & (out) & \lstinline|.valid| & valid \lstinline|Bool| \\
+                & (out) & \lstinline|.bits| & data \\
+            \end{tabular}
 }
-
-\noindent\adjustbox{bgcolor=\highlightqueue,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{queue}{Queue} } is a \verb$Module$ providing a hardware queue
-\subsubsection{Constructor}: \newline
-\verb$Queue(enq:DecoupledIO, entries:Int)$ \newline
-\begin{tabular}{l l l}
-& \verb$enq$ & \verb$DecoupledIO$ source for the queue \\
-& \verb$entries$ & size of queue \\
-\end{tabular}
-\subsubsection{Interface}: \newline
-\begin{tabular}{l l l}
-& \verb$.io.enq$ & \verb$DecoupledIO$ source (flipped) \\
-& \verb$.io.deq$ & \verb$DecoupledIO$ sink \\
-& \verb$.io.count$ & \verb$UInt$ count of elements in the queue \\
-\end{tabular}
+\newline \newline
+\highlightbox{rowlightcolor}{
+    \subsection{Queue } is a \lstinline|Module| providing a hardware queue
+        \subsubsection{Constructor}: \newline
+            \lstinline|Queue(enq:DecoupledIO, entries:Int)| \newline
+            \begin{tabular}{l l l}
+                & \lstinline|enq| & \lstinline|DecoupledIO| source for the queue \\
+                & \lstinline|entries| & size of queue \\
+            \end{tabular}
+        \subsubsection{Interface}: \newline
+            \begin{tabular}{l l l}
+                & \lstinline|.io.enq| & \lstinline|DecoupledIO| source (flipped) \\
+                & \lstinline|.io.deq| & \lstinline|DecoupledIO| sink \\
+                & \lstinline|.io.count| & \lstinline|UInt| count of elements in the queue \\
+            \end{tabular}
 }
-
-\noindent\adjustbox{bgcolor=\highlightpipe,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{pipe}{Pipe} }is a \verb$Module$ delaying input data
-\subsubsection{Constructor}: \newline
-\verb$Pipe(enqValid:Bool, enqBits:Data, [latency:Int])$ \newline
-\verb$Pipe(enq:ValidIO, [latency:Int])$ \newline
-\begin{tabular}{l l l}
-& \verb$enqValid$ & input data, valid component \\
-& \verb$enqBits$ & input data, data component \\
-& \verb$enq$ & input data as \verb$ValidIO$ \\
-& \verb$latency$ & {\em(optional, default 1)} cycles to delay data by \\
-\end{tabular}
-\subsubsection{Interface}: \newline
-\begin{tabular}{l l l}
-& \verb$.io.enq$ & \verb$ValidIO$ source (flipped) \\
-& \verb$.io.deq$ & \verb$ValidIO$ sink \\
-\end{tabular}
+\newline \newline
+\highlightbox{rowcolor}{
+    \subsection{Pipe }is a \lstinline|Module| delaying input data
+        \subsubsection{Constructor}: \newline
+            \lstinline|Pipe(enqValid:Bool, enqBits:Data, [latency:Int])| \newline
+            \lstinline|Pipe(enq:ValidIO, [latency:Int])| \newline
+            \begin{tabular}{l l l}
+                & \lstinline|enqValid| & input data, valid component \\
+                & \lstinline|enqBits| & input data, data component \\
+                & \lstinline|enq| & input data as \lstinline|ValidIO| \\
+                & \lstinline|latency| & {\em(optional, default 1)} cycles to delay data by \\
+            \end{tabular}
+        \subsubsection{Interface}: \newline
+            \begin{tabular}{l l l}
+                & \lstinline|.io.enq| & \lstinline|ValidIO| source (flipped) \\
+                & \lstinline|.io.deq| & \lstinline|ValidIO| sink \\
+            \end{tabular}
 }
-
-\noindent\adjustbox{bgcolor=\highlightarbiters,minipage=[t]{\linewidth}}{
-\subsection{\colorbox{arbiters}{Arbiters} } are \verb$Module$s connecting multiple producers\newline
-\phantom{x} to one consumer \newline
-\verb$Arbiter$ prioritizes lower producers \newline
-\verb$RRArbiter$ runs in round-robin order
-\subsubsection{Constructor}: \newline
-\verb$Arbiter(gen:Data, n:Int)$ \newline
-\begin{tabular}{l l l}
-& \verb$gen$ & data type \\
-& \verb$n$ & number of producers \\
-\end{tabular}
-\subsubsection{Interface}: \newline
-\begin{tabular}{l l l}
-& \verb$.io.in$ & \verb$Vec$ of \verb$DecoupledIO$ inputs (flipped) \\
-& \verb$.io.out$ & \verb$DecoupledIO$ output \\
-& \verb$.io.chosen$ & \verb$UInt$ input index on \verb$.io.out$, \\
-& & does not imply output is valid \\
-\end{tabular}
+\newline \newline
+\highlightbox{rowlightcolor}{
+    \subsection{Arbiters } are \lstinline|Module|s connecting multiple producers\newline
+        \phantom{x} to one consumer \newline
+        \lstinline|Arbiter| prioritizes lower producers \newline
+        \lstinline|RRArbiter| runs in round-robin order
+        %
+        \subsubsection{Constructor}: \newline
+            \lstinline|Arbiter(gen:Data, n:Int)| \newline
+            \begin{tabular}{l l l}
+                & \lstinline|gen| & data type \\
+                & \lstinline|n| & number of producers \\
+            \end{tabular}
+        \subsubsection{Interface}: \newline
+            \begin{tabular}{l l l}
+                & \lstinline|.io.in| & \lstinline|Vec| of \lstinline|DecoupledIO| inputs (flipped) \\
+                & \lstinline|.io.out| & \lstinline|DecoupledIO| output \\
+                & \lstinline|.io.chosen| & \lstinline|UInt| input index on \lstinline|.io.out|, \\
+                & & does not imply output is valid \\
+            \end{tabular}
 }
 
 \end{multicols}
