@@ -1,6 +1,15 @@
+
 % "define" Scala
-\usepackage[T1]{fontenc}  
-\usepackage{microtype} 
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{xcolor}
+
+\definecolor{commentcolor}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{stringcolor}{rgb}{0.58,0,0.82}
+\definecolor{light-gray}{gray}{0.75}
+\definecolor{keywordcolor}{rgb}{0,0,1}
+\definecolor{procnamecolor}{rgb}{1,0,0}
 
 \sbox0{\small\ttfamily A}
 \edef\mybasewidth{\the\wd0 }
@@ -21,29 +30,24 @@
   morestring=[b]"""
 }
 
-\usepackage{color}
-\definecolor{dkgreen}{rgb}{0,0.6,0}
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\definecolor{mauve}{rgb}{0.58,0,0.82}
-\definecolor{light-gray}{gray}{0.75}
-
 % Default settings for code listings
 \lstset{language=scala,
+  backgroundcolor = \color{codebgcolor},
   showstringspaces=false,
   columns=fixed, % basewidth=\mybasewidth,
   basicstyle={\small\ttfamily},
   numbers=none,
   numberstyle=\footnotesize\color{gray},
   % identifierstyle=\color{red},
-  keywordstyle=\color{blue},
-  commentstyle=\color{dkgreen},
-  stringstyle=\color{mauve},
+  keywordstyle=\color{keywordcolor},
+  commentstyle=\color{commentcolor},
+  stringstyle=\color{stringcolor},
   breakatwhitespace=true,
   procnamekeys={def, val, var, class, trait, object, extends},
-  procnamestyle=\ttfamily\color{red},
-  frame=leftline,
+  procnamestyle=\ttfamily\color{procnamecolor},
+  frame=none,
   rulecolor=\color{light-gray},
-  xleftmargin=2mm,
+  xleftmargin=0mm,
   aboveskip=2pt,
   belowskip=2pt,
 }
