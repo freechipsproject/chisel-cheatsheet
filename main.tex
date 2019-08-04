@@ -11,12 +11,15 @@
 \usepackage{mdframed}
 \input{scala.tex}
 
-\pagecolor{white}
+\def \themecolor{blue}
 
 % Color Pallete
-\colorlet{tablekeyscolor}{green!90!yellow!60}
-\colorlet{rowcolor}{green!80!yellow!50}
-\colorlet{rowlightcolor}{green!70!yellow!40}
+\colorlet{codebgcolor}{\themecolor!20}
+\colorlet{darkcolor}{\themecolor!90!yellow!60}
+\colorlet{normalcolor}{\themecolor!80!yellow!50}
+\colorlet{lightcolor}{\themecolor!70!yellow!40}
+
+\pagecolor{\themecolor!50!white!20}
 
 % Remove section numbering
 \setcounter{secnumdepth}{0}
@@ -54,7 +57,7 @@
 \begin{center}
 Version 0.5 (beta): \today
 \end{center}
-
+\vspace{1em}
 \fcolorbox{red}{yellow}{ \parbox{0.95\columnwidth} {
 \subsection{Notation In This Document}:
 \subsubsection{For Functions and Constructors}: \newline
@@ -68,59 +71,56 @@ Arguments in brackets (\texttt{[...]}) are optional.
 \phantom{x} maximum possible values of \texttt{x}
 } }
 
-\section{Basic Chisel Constructs } \hrulefill
-\subsection{Chisel Wire Operators}:
-\begin{scala}
-// Allocate a as wire of type UInt()
-val x = Wire(UInt())
-x := y	// Connect wire y to wire x
-\end{scala}
-
-\subsection{When } executes blocks conditionally by \lstinline|Bool|, \newline
-\phantom{x} and is equivalent to Verilog \lstinline|if|
-\begin{scala}
-when(condition1) {
-  // run if condition1 true and skip rest
-} .elsewhen(condition2) {
-  // run if condition2 true and skip rest
-} .otherwise {
-  // run if none of the above ran
-}
-\end{scala}
-
-\subsection{Switch } executes blocks conditionally by data
-\begin{scala}
-switch(x) {
-  is(value1) {
-    // run if x === value1
-  }
-  is(value2) {
-    // run if x === value2
-  }
-}
-\end{scala}
-
-\subsection{Enum } generates value literals for enumerations \newline
-\lstinline|val s1::s2::| ... \lstinline|::sn::Nil| \newline
-\lstinline|    = Enum(nodeType:UInt, n:Int)| \newline
-\begin{tabular}{l l l}
-& \lstinline|s1|, \lstinline|s2|, ..., \lstinline|sn| & will be created as \lstinline|nodeType| literals \\
-& & with distinct values \\
-& \lstinline|nodeType| & type of \lstinline|s1|, \lstinline|s2|, ..., \lstinline|sn| \\
-& \lstinline|n| & element count \\
-\end{tabular}
-
-\subsection{Math Helpers}: \newline
+\section{Basic Chisel Constructs } \hrulefill \\
+\highlightbox{normalcolor}{
+    \subsection{Chisel Wire Operators}:
+        \begin{scala}^^J
+            // Allocate a as wire of type UInt()^^J
+            val x = Wire(UInt())^^J
+            x := y	// Connect wire y to wire x^^J
+        \end{scala}
+    \subsection{When } executes blocks conditionally by \lstinline|Bool|, \newline
+    \phantom{x} and is equivalent to Verilog \lstinline|if|
+    \begin{scala}^^J
+        when(condition1) \{^^J
+        \ \ // run if condition1 true and skip rest^^J
+        \} .elsewhen(condition2) \{^^J
+        \ \ // run if condition2 true and skip rest^^J
+        \} .otherwise \{^^J
+        \ \ // run if none of the above ran^^J
+        \}^^J
+    \end{scala}
+    \subsection{Switch } executes blocks conditionally by data
+    \begin{scala}^^J
+        switch(x) \{^^J
+        \ \ is(value1) \{^^J
+        \ \ \ \ // run if x === value1^^J
+        \ \ \}^^J
+        \ \ is(value2) \{^^J
+        \ \ \ \ // run if x === value2^^J
+        \ \ \}^^J
+        \}^^J
+    \end{scala}
+    \subsection{Enum } generates value literals for enumerations \newline
+        \lstinline|val s1::s2::| ... \lstinline|::sn::Nil| \newline
+        \lstinline|    = Enum(nodeType:UInt, n:Int)| \newline
+        \begin{tabular}{l l l}
+            & \lstinline|s1|, \lstinline|s2|, ..., \lstinline|sn| & will be created as \lstinline|nodeType| literals \\
+            & & with distinct values \\
+            & \lstinline|nodeType| & type of \lstinline|s1|, \lstinline|s2|, ..., \lstinline|sn| \\
+            & \lstinline|n| & element count \\
+        \end{tabular}
+    \subsection{Math Helpers}: \newline
     \begin{tabular}{l l}
         \lstinline|log2Ceil(in:Int): Int| & $log_2(\texttt{in})$ rounded up \\
         \lstinline|log2Floor(in:Int): Int| & $log_2(\texttt{in})$ rounded down \\
         \lstinline|isPow2(in:Int): Boolean| & \lstinline|True| if \lstinline|in| is a power of 2 \\
     \end{tabular}
-
+}
 \columnbreak
 
 \section{Basic Data Types} \hrulefill \\
-\highlightbox{blue!30}{
+\highlightbox{normalcolor}{
     \subsubsection{Constructors}: \newline
         \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l}
             \lstinline|Bool()| & type, boolean value \\
@@ -143,7 +143,7 @@ switch(x) {
 
 
 \section{State Elements } \hrulefill \\
-\highlightbox{blue!30}{
+\highlightbox{lightcolor}{
     %
     \subsection{Registers } retain state until updated \newline
         \lstinline[columns=fixed]|val my_reg = Reg(UInt(32.W))| \newline
@@ -170,34 +170,35 @@ switch(x) {
         \lstinline|mu_mem(addr:UInt/Int) := y|
 }
 
-\section{Modules } \hrulefill
-\subsubsection{Defining}: subclass \lstinline|Module| with elements, code:
-\begin{scala}
-class Accum(width:Int) extends Module {
-  val io = IO(new Bundle {
-    val in = Input(UInt(width.W))
-    val out  = Output(UInt(width.W))
-  })
-  val sum = Reg(UInt())
-  sum := sum + io.in
-  io.out := sum
+\section{Modules } \hrulefill \newline
+\highlightbox{normalcolor}{
+    \subsubsection{Defining}: subclass \lstinline|Module| with elements, code:
+        \begin{scala}^^J
+            class Accum(width:Int) extends Module \{^^J
+            \ \ val io = IO(new Bundle \{^^J
+            \ \ \ \ val in = Input(UInt(width.W))^^J
+            \ \ \ \ val out  = Output(UInt(width.W))^^J
+            \ \ \})^^J
+            \ \ val sum = Reg(UInt())^^J
+            \ \ sum := sum + io.in^^J
+            \ \ io.out := sum^^J
+            \}^^J
+        \end{scala}
+    \subsubsection{Usage}: access elements using dot notation: \newline
+        \phantom{x} (code inside a \lstinline|Module| is always running)
+        \begin{scala}^^J
+            val my_module = Module(new Accum(32))^^J
+            my_module.io.in := some_data^^J
+            val sum := my_module.io.out^^J
+        \end{scala}
 }
-\end{scala}
-\subsubsection{Usage}: access elements using dot notation: \newline
-\phantom{x} (code inside a \lstinline|Module| is always running)
-\begin{scala}
-val my_module = Module(new Accum(32))
-my_module.io.in := some_data
-val sum := my_module.io.out
-\end{scala}
-
 \columnbreak
 
-\subsubsection{Operators}: \newline \newline
+\section{Operators}: \hrulefill \newline \newline
 {
-\rowcolors{2}{rowcolor}{rowlightcolor}
+\rowcolors{2}{normalcolor}{lightcolor}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill} } l l l}
-\rowcolor{tablekeyscolor}
+\rowcolor{darkcolor}
 Chisel & Explanation & Width \\
 \lstinline|!x| & Logical NOT & \lstinline|1| \\
 \lstinline|x && y| & Logical AND & \lstinline|1| \\
@@ -241,11 +242,10 @@ Chisel & Explanation & Width \\
 \lstinline|x >> n| & Arithmetic right shift & \lstinline|w(x) - n| \\
 \end{tabular*}
 }
-
-\subsubsection{UInt bit-reduction methods}: \newline \newline
-{\rowcolors{2}{rowcolor}{rowlightcolor}
+\subsubsection{UInt bit-reduction methods}: \newline
+{\rowcolors{2}{normalcolor}{lightcolor}
 \begin{tabular*}{\columnwidth}{ l l c}
-\rowcolor{tablekeyscolor}
+\rowcolor{darkcolor}
 Chisel & Explanation & Width \\
 \lstinline|x.andR  | & AND-reduce    & \lstinline|1| \\
 \lstinline|x.orR   | & OR-reduce     & \lstinline|1| \\
@@ -260,7 +260,7 @@ x.asUInt.andR
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Hardware Generation } \hrulefill \\
-\highlightbox{rowcolor}{
+\highlightbox{normalcolor}{
     \subsection{Functions } provide block abstractions for code.  Scala
     functions that instantiate or return Chisel types are code generators.
     \subsection{Also}: Scala's \lstinline|if| and \lstinline|for| can be used to control hardware generation
@@ -274,7 +274,7 @@ x.asUInt.andR
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Aggregate Types } \hrulefill \\
-\highlightbox{rowlightcolor}{
+\highlightbox{lightcolor}{
     \subsection{Bundle } contains \lstinline|Data| types indexed by name
         \subsubsection{Defining}: subclass \lstinline|Bundle|, define components:
         \begin{scala}^^J
@@ -299,7 +299,7 @@ x.asUInt.andR
         \end{scala}
 }
 \newline \newline
-\highlightbox{rowcolor}{
+\highlightbox{normalcolor}{
     \subsection{Vec } is an indexable vector of \lstinline|Data| types \\
         \lstinline|val myVec = Vec(elts:Iterable[Data])|
         \begin{tabular}{l l l}
@@ -329,7 +329,7 @@ x.asUInt.andR
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Standard Library: Function Blocks } \hrulefill \\
-\highlightbox{blue!30}{
+\highlightbox{lightcolor}{
     \subsection{Stateless}: \newline
         \lstinline|PopCount(in:Bits/Seq[Bool]): UInt| \newline
         \phantom{x} Returns number of hot (= 1) bits in \lstinline|in|\\
@@ -369,7 +369,7 @@ x.asUInt.andR
         \end{tabular}
 }
 \newline \newline
-\highlightbox{blue!30}{
+\highlightbox{normalcolor}{
     \subsection{Stateful}: \newline
         \lstinline|LFSR16([increment:Bool]): UInt| \newline
         \begin{tabular}{l l l}
@@ -385,7 +385,7 @@ x.asUInt.andR
 \newline \newline
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Standard Library: Interfaces } \hrulefill \\
-\highlightbox{rowlightcolor}{
+\highlightbox{lightcolor}{
     \subsection{DecoupledIO } \mbox{is a \texttt{Bundle} with a ready-valid interface}
         \subsubsection{Constructor}: \newline
             \lstinline|Decoupled(gen:Data)| \newline
@@ -400,7 +400,7 @@ x.asUInt.andR
             \end{tabular}
 }
 
-\highlightbox{rowcolor}{
+\highlightbox{normalcolor}{
     \subsection{ValidIO } is a \lstinline|Bundle| with a valid interface
         \subsubsection{Constructor}: \newline
             \lstinline|Valid(gen:Data)| \newline
@@ -414,7 +414,7 @@ x.asUInt.andR
             \end{tabular}
 }
 \newline \newline
-\highlightbox{rowlightcolor}{
+\highlightbox{lightcolor}{
     \subsection{Queue } is a \lstinline|Module| providing a hardware queue
         \subsubsection{Constructor}: \newline
             \lstinline|Queue(enq:DecoupledIO, entries:Int)| \newline
@@ -430,7 +430,7 @@ x.asUInt.andR
             \end{tabular}
 }
 \newline \newline
-\highlightbox{rowcolor}{
+\highlightbox{normalcolor}{
     \subsection{Pipe }is a \lstinline|Module| delaying input data
         \subsubsection{Constructor}: \newline
             \lstinline|Pipe(enqValid:Bool, enqBits:Data, [latency:Int])| \newline
@@ -448,7 +448,7 @@ x.asUInt.andR
             \end{tabular}
 }
 \newline \newline
-\highlightbox{rowlightcolor}{
+\highlightbox{lightcolor}{
     \subsection{Arbiters } are \lstinline|Module|s connecting multiple producers\newline
         \phantom{x} to one consumer \newline
         \lstinline|Arbiter| prioritizes lower producers \newline
