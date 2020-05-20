@@ -314,10 +314,6 @@ val my_bundle = new Bundle {
 \verb$OHToUInt(in:Bits/Seq[Bool]): UInt$ \newline
 \phantom{x} Returns the \verb$UInt$ representation of one-hot \verb$in$
 
-\verb$Counter(n:Int]): UInt$ \newline
-\phantom{x} .inc() bumps counter returning true when n reached \newline
-\phantom{x} .value returns current value
-
 \verb$PriorityEncoder(in:Bits/Iterable[Bool]): UInt$ \newline
 \phantom{x} Returns the position the least significant \verb$1$ in \verb$in$
 
@@ -339,6 +335,11 @@ val my_bundle = new Bundle {
 \end{tabular}
 
 \subsection{Stateful}: \newline
+
+\verb$Counter(n:Int]): UInt$ \newline
+\phantom{x} .inc() bumps counter returning true when n reached \newline
+\phantom{x} .value returns current value
+
 \verb$LFSR16([increment:Bool]): UInt$ \newline
 \begin{tabular}{l l l}
 & \multicolumn{2}{l}{16-bit LFSR (to generate pseudorandom numbers)} \\
