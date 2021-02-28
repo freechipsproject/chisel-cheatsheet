@@ -42,7 +42,7 @@
 
 \ruleline{\Large{\textbf{Chisel3 Cheat Sheet}}}
 \begin{center}
-Version 0.5 (beta): \today
+Version 0.5.1 (beta): \today
 \end{center}
 
 \fbox{ \parbox{0.95\columnwidth} {
@@ -199,7 +199,6 @@ Chisel & Explanation & Width \\
 \verb$x ^ y$ & Bitwise XOR & \verb$max(w(x), w(y))$ \\
 \hline
 \verb$x === y$ & Equality{\small\textcolor{red}{(triple equals)}} & \verb$1$ \\
-\verb$x != y$ & Inequality & \verb$1$ \\
 \verb$x =/= y$ & Inequality & \verb$1$ \\
 \hline
 \verb$x + y$ & Addition & \verb$max(w(x),w(y))$ \\
@@ -268,7 +267,7 @@ val my_bundle = new Bundle {
 \end{scala}
 \subsubsection{Using}: access elements through dot notation: \newline
 \verb$val bundleVal = my_bundle.a$ \newline
-\verb$my_bundle.a := Bool(true)$
+\verb$my_bundle.a := true.B$
 
 \subsection{Vec } is an indexable vector of \verb$Data$ types \newline
 \verb$val myVec = Vec(elts:Iterable[Data])$ \newline
@@ -282,8 +281,8 @@ val my_bundle = new Bundle {
 & \verb$gen$ & initial element \verb$Data$, called once per element \\
 \end{tabular}
 \subsubsection{Using}: access elements by dynamic or static indexing: \newline
-\verb$readVal := myVec(ind:Data/idx:Int)$ \newline
-\verb$myVec(ind:Data/idx:Int) := writeVal$
+\verb$readVal := myVec(ind: UInt / idx: Int)$ \newline
+\verb$myVec(ind: UInt / idx: Int) := writeVal$
 \subsubsection{Functions}: (\verb$T$ is the \verb$Vec$ element's type) \newline
 \begin{tabular}{l l l}
 & \verb$.forall(p:T=>Bool): Bool$ & AND-reduce \verb$p$ on all elts \\
