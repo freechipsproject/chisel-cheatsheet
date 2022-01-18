@@ -1,14 +1,19 @@
 # chisel-cheatsheet
 Cheatsheet for the Chisel hardware construction language: all the core functionality, on a single (double-sided) letter-sized sheet!
 
-## How to update the cheat sheet
+For edit access, ask one of the project maintainers.
+We also accept pull requests on GitHub.
+
+## How to View the Updated Cheat Sheet
+
+### Generate the PDF via `pdflatex`
 
 1. Make your edits to the file main.tex
-2. Generate the pdf.
-   1. On linux I used `pdflatex main.tex` on linux
+2. Generate the pdf:
+   1. On Linux you can use `pdflatex main.tex`
    2. Make sure your version looks good
       1. Be careful that you have not broken the layout
-   3. When you are happy with your change update the version in `main.tex` currently this is around line 45 and looks like
+   3. When you are happy with your change update the version in `main.tex`. Currently this is around line 45 and looks like `Version 0.5.3 (beta): \today`.
    4. Run `pdflatex main.tex` again
    5. `mv main.tex chisel_cheatsheet.pdf`
    6. Create a PR with your changes
@@ -26,9 +31,10 @@ Cheatsheet for the Chisel hardware construction language: all the core functiona
       6. In the box there, upload the `chisel_cheatsheet.pdf`
       7. Click `Publish release`
 
-## Alternative way to edit and regenerate
+### On Overleaf (May be Stale)
+
 >This link may be stale
 
 [View this project on Overleaf.](https://www.overleaf.com/read/xpgmbbgjqszd)
-For edit access, ask one of the project maintainers.
-We also accept pull requests on GitHub.
+
+
