@@ -135,6 +135,7 @@ Flavors \newline
 \begin{tabular}{l l l}
 & \verb$RegInit(7.U(32.w))$ & reg with initial value 7 \\
 & \verb$RegNext(next_val)$ & update each clock, no init\\
+& \verb$RegNext(next, init)$ & update, with init\\
 & \verb$RegEnable(next, enable)$ & update, with enable gate \\
 \end{tabular}
 \subsubsection{Updating}: assign to latch new value on next clock: \newline
