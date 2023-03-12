@@ -1,0 +1,42 @@
+= Connections
+:toc:
+
+
+### Connection operators
+Connection operators can be confusing
+Notion of producer and consumer
+Of the form <LHS> <op> <RHS>
+[%header,cols="2,2,5"]
+|===
+| Example | kind | Description
+| `x := y`    | basic connector                     | `y drives x`
+| `bundle1 <> bundle2` | Chisel basic bulk connect | requirements on bundle matching
+|===
+#### Turducken bulk operators
+[cols="2,2,5"]
+|===
+| `data1 :<>= data2` | symmetric operator |
+| `data1 :>= data2` | producer on RHS | the right-hand-side of the connection; will always drive leaf connections, and never get driven by leaf connections ("aligned connection")
+| `data1 :\<= data2` | producer on LHS | the right-hand-side of the connection; will always be driven by leaf connections, and never drive leaf connections ("flipped connection")
+| `data1 :#= data2` | RHS is producer | all members will be driving, none will be driven-to
+|===
+
+[%header,cols="3,4,1,1,1,1"]
+|=====
+| Turducken Properties     | Description | `:<>=` | `:\<=`  | `:>=` |  `:#=`
+| noDangles:               | Description | ✓ | ✓  | ✓ | ✓
+| noUnconnected:           | Description | ✓ | ✓  | ✓ | ✓
+| mustMatch:               | Description | ✓ | ✓  | ✓ | ✓
+| noWrongOrientations:     | Description | ✓ | ✓  | ❌ | ✓
+| noMismatchedWidths:      | Description | ✓ | ✓  | ✓ | ✓
+| connectToConsumer:       | Description | ✓ | ✓  | ✓ | ❌
+| connectToProducer:       | Description | ✓ | ❌  | ❌ | ✓
+| alwaysConnectToConsumer: | Description | ❌ | ❌  | ✓ | ❌
+|=====
+
+### Connection modifiers
+[%header,cols="1,1,1"]
+|===
+| Waive |
+|
+|===

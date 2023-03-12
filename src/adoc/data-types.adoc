@@ -1,0 +1,135 @@
+= Data Types
+:toc:
+
+## Basic DataTypes
+
+### Constructors
+[%header,cols="2,3,1"]
+|===
+| Constructor                    | Explanation               |
+| Bool()                         | Bool generator            |
+| true.B or false.B              | Bool literals             |
+| 1.U.asBool                     | cast UInt to Bool         |
+| 7.U.asBools                    | cast UInt to Seq of Bool  |
+| UInt()                         | Unsigned integer          |
+| UInt(32.W)                     | Unsigned integer 32 bit   |
+| 77.U or "hdead".U              | Unsigned integer literals |
+| BigInt("12346789ABCDEF", 16).U | Make large UInt literal   |
+| Bool().asUInt                  | cast Bool as UInt         |
+| 1.U(16.W) or "hdead".U         | Literal 16 bit            |
+| SInt()                         | Signed integer            |
+| SInt(64.W)                     | Signed integer 64 bit     |
+| -3.S                           | Signed integer literals   |
+| 3.S(2.W)                       | Signed 2-bit value (-1)   |
+|===
+
+### Casts
+Methods for converting between basic data types
+[%header,cols="1,1,1"]
+|===
+| Constructor     | Explanation                     |
+| 1.U.asBool      | cast UInt to Bool               |
+| 7.U.asBools     | cast UInt to Seq of Bool        |
+| Unsigned integer          | |
+| Bool().asUInt   | cast Bool as UInt               |
+| -88.S.asUInt    | cast signed value as unsigned   |
+| 7.U(3.W).asSInt | cast UInt to SInt (zero-extend) |
+| 3.S(2.W)        | Signed 2-bit value (-1)         |
+|===
+*Bits, UInt, SInt casts*: re-interpret cast except for
+UInt -> SInt which Zero-extends to SInt
+
+### Aggregate Types
+#### Bundles
+*Bundle* contains ``Data`` types indexed by name +
+*Defining*: subclass ``Bundle``, define components:
+```
+    class MyBundle extends Bundle {
+      val a = Bool()
+      val b = UInt(32.W)
+    }
+```
+*Constructor*: instantiate `Bundle` subclass
+```
+    val my_bundle = new MyBundle()
+```
+*Inline* defining: define a `Bundle` type
+```
+    val my_bundle = new Bundle {
+      val a = Bool()
+      val b = UInt(32.W)
+    }
+```
+
+*Using*: access elements through dot notation:
+```
+    val bundleVal = my_bundle.a
+    my_bundle.a := true.B
+```
+
+#### Vec
+*Vec* is an indexable vector of `Data` types
+```
+val myVec = Vec(elts:Iterable[Data])
+```
+[%header, cols="3,2"]
+|===
+| Operator         | Explanation
+| `val myVec = Vec(elts: Iterable[Data])` | `elts` initial `Data` (vector depth inferred)
+| `val myVec = Vec.fill(n: Int) { gen: Data }` | `n` is vec depth `gen` initial `Data` called once per element
+|===
+
+*Using*: access elements by dynamic or static indexing:
+[%header,cols="3,2"]
+|===
+| Dynamic Index | Static Index
+| `readVal := myVec(ind: UInt)`             | `readVal := myVec(1)`
+|              | `readVal := myVec(i)` where `i` is a Scala val
+|===
+
+[%header, cols="3,2"]
+|===
+| Function         | Explanation
+| `.forall(p:T=>Bool): Bool``| AND-reduce `p` on all elts
+| `.exists(p:T=>Bool): Bool`| OR-reduce `p` on all elts
+| `.contains(x:T): Bool`    | `True` if this contains `x`
+| `.count(p:T=>Bool): UInt` | count elts where `p` is `True`
+|`.indexWhere(p:T=>Bool): UInt` | index where p is `true.B`
+|`.lastIndexWhere(p:T=>Bool): UInt` | last index where p is `true.B`
+|`.onlyIndexWhere(p:T=>Bool): UInt` | only index where p is `true.B`
+|===
+
+
+### State Elements
+Registers retain state until updated
+
+[%header,cols="1,1"]
+|===
+| Constructor     | Explanation
+| val myReg = Reg(UInt())      | Create a reference `myReg` to a register of type UInt
+| val myReg = RegInit(7.U(32.W))    | `myReg` is a Reg with initial value of 7
+| val myReg = RegNext(nextValue)    | Reg is updated at each rising clock, no initial value
+| val myReg = RegNext(nextValue, init = 3.U(32.W))    | Reg is updated at each rising clock, with initial value
+| val myReg = RegEnable(nextValue, init = 3.U(32.W))    | Reg is updated, has an enable gate
+|===
+Updating: assign to latch new value on next clock: my_reg := next_val
+
+### Modules
+*Defining*: subclass `Module` with elements, code:
+```
+class Accum(width:Int) extends Module
+  val io = IO(new Bundle {
+    val in = Input(UInt(width.W))
+    val out = Output(UInt(width.W))
+  })
+  val sum = Reg(UInt())
+  sum := sum + io.in
+  io.out := sum
+}
+```
+*Usage*: access elements using dot notation: (code inside a `Module` is always running)
+```
+val my_module = Module(new Accum(32))
+my_module.io.in := some_data val
+sum := my_module.io.out
+```

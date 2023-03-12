@@ -1,0 +1,90 @@
+= Standard Library
+:toc:
+
+#### Standard Library -- Stateless
+
+[%header,cols="3,1,3"]
+|===
+| Method         | Return value             | Explanation
+| `PopCount(in:Bits)` | UInt | Returns number of hot (= 1) bits in `in`
+| `PopCount(in:Seq[Bool])` | UInt | Returns number of hot (= 1) bits in `in`
+| `Reverse(in:UInt)`            | UInt | Reverses the bit order of `in`
+| `UIntToOH(in:UInt, [width:Int])`  | Bits | Returns the one-hot encoding of `in` width (optional, else inferred) output width
+| `OHToUInt(in:Bits)`  | UInt | Returns the UInt representation of one-hot `in`
+| `OHToUInt(in: Seq[Bool])`  | UInt | Returns the UInt representation of one-hot `in`
+| `PriorityEncoder(in:Bits)` | UInt | Returns the position the least significant 1 in `in`
+| `PriorityEncoder(in:Iterable[Bool])` | UInt | Returns the position the least significant 1 in `in`
+| `PriorityEncoderOH(in:Bits)` | UInt | Returns the position of the hot bit in `in`
+| `Mux1H(sel: Seq[Bool], in: Seq[Data])` | Data | One hot mux
+| `Mux1H(sel: UInt, Seq[Data])` | Data | One hot mux
+| `Mux1H(sel:UInt, in: UInt)` | Data | One hot mux
+| `PriorityMux(in:Iterable[(Bool,Bits])` | Bits | Priority Mux
+| `PriorityMux(sel:Bits/Iterable[Bool], in:Iterable[Bits])` | Bits | A mux tree with either a one-hot select or multiple selects (where the first inputs are prioritized)
+|===
+
+#### Standard Library -- Stateful
+
+[%header,cols="2,3,1"]
+|===
+| Method         | Explanation |
+| Counter        | various use models, see examples below |
+| LFSR([increment: Bool])   | 16-bit Linear-feedback shift register + pseudo random number generator |
+| Shift Register(in: Data, n: Int, [en: Bool]) | Shift Register | `in` is data +
+`n` is cycle delay +
+`en` optional enable, default is true
+|===
+
+#### Standard Library -- Interfaces
+
+[%header,cols="3,2,2,2"]
+|===
+| Method         | Returns | Params | Interface
+| DecoupledIO(gen: Data)    | bundle with a ready valid interface | gen: Data is payload | .ready +
+.valid +
+.bits
+| ValidIO(gen: Data)        | bundle with a valid interface| gen: Data is payload | .valid +
+.bits
+| Queue(enq: DecoupledIO, entries:Int)   | hardware queue Module | enqueue decoupled payload, entries is depth  | io.enq +
+io.deq +
+io.count
+| Pipe(enqValid:Bool, enqBits:Data, [latency:Int]) +
+Pipe(enq:ValidIO, [latency:Int])           | Module delaying input | enq +
+bits payload +
+enq ValidIO +
+latency is depth | .io.enq ValidIO source (flipped) +
+.io.deq ValidIO sink
+| Arbiter(gen: Data, n: Int)        | Module with multiple producers and one consumer| gen is payload type +
+n is number of producers| .io.in Vec of  inputs (flipped) +
+.io.out output +
+.io.chosen UInt input index on .io.out does not imply output is valid
+| RRArbiter      | like arbiter but uses Round robin scheme | same as Arbiter | Same as Arbiter
+|===
+
+#### Standard Library -- Examples -- Counter
+Example: Simple Counter +
+Constructor `Counter(n:Int): Counter`
+```
+val c = new Counter(n)
+val wrap = WireInit(false.B)
+when(cond) { wrap := c.inc() } // .inc returns true when wrap occurs
+```
+
+Example: Counter from `object Counter`
+Constructor `Counter(cond: UInt, n:Int): (UInt, Bool)`
+```
+val countOn = true.B // increment counter every clock cycle
+val (counterValue, counterWrap) = Counter(countOn, 4)
+when (counterValue === 3.U) {
+  ...
+}
+```
+
+Example: Range based `Counter`
+Constructor `Counter(cond: UInt, n:Int): (UInt, Bool)`
+```
+val (counterValue, counterWrap) = Counter(0 until 10 by 2)
+when (counterValue === 4.U) {
+  ...
+}
+```
+
