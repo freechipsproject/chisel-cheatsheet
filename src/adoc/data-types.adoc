@@ -1,29 +1,28 @@
 = Data Types
 :toc:
 
-## Basic DataTypes
+`Bool`, `UInt`, `SInt`, `Bundle`, `Vec`, `ChiselEnum`
 
-### Constructors
+== Basic DataTypes
+
+=== Constructors
 [%header,cols="2,3,1"]
 |===
 | Constructor                    | Explanation               |
 | Bool()                         | Bool generator            |
 | true.B or false.B              | Bool literals             |
-| 1.U.asBool                     | cast UInt to Bool         |
-| 7.U.asBools                    | cast UInt to Seq of Bool  |
 | UInt()                         | Unsigned integer          |
 | UInt(32.W)                     | Unsigned integer 32 bit   |
 | 77.U or "hdead".U              | Unsigned integer literals |
 | BigInt("12346789ABCDEF", 16).U | Make large UInt literal   |
-| Bool().asUInt                  | cast Bool as UInt         |
-| 1.U(16.W) or "hdead".U         | Literal 16 bit            |
+| 1.U(16.W) or "hdead".U         | Literal 1 16 bits wide    |
 | SInt()                         | Signed integer            |
 | SInt(64.W)                     | Signed integer 64 bit     |
 | -3.S                           | Signed integer literals   |
 | 3.S(2.W)                       | Signed 2-bit value (-1)   |
 |===
 
-### Casts
+=== Casts
 Methods for converting between basic data types
 [%header,cols="1,1,1"]
 |===
@@ -39,35 +38,35 @@ Methods for converting between basic data types
 *Bits, UInt, SInt casts*: re-interpret cast except for
 UInt -> SInt which Zero-extends to SInt
 
-### Aggregate Types
-#### Bundles
+=== Aggregate Types
+==== Bundles
 *Bundle* contains ``Data`` types indexed by name +
 *Defining*: subclass ``Bundle``, define components:
 ```
-    class MyBundle extends Bundle {
-      val a = Bool()
-      val b = UInt(32.W)
-    }
+class MyBundle extends Bundle {
+  val a = Bool()
+  val b = UInt(32.W)
+}
 ```
 *Constructor*: instantiate `Bundle` subclass
 ```
-    val my_bundle = new MyBundle()
+val my_bundle = new MyBundle()
 ```
 *Inline* defining: define a `Bundle` type
 ```
-    val my_bundle = new Bundle {
-      val a = Bool()
-      val b = UInt(32.W)
-    }
+val my_bundle = new Bundle {
+  val a = Bool()
+  val b = UInt(32.W)
+}
 ```
 
 *Using*: access elements through dot notation:
 ```
-    val bundleVal = my_bundle.a
-    my_bundle.a := true.B
+val bundleVal = my_bundle.a
+my_bundle.a := true.B
 ```
 
-#### Vec
+==== Vec
 *Vec* is an indexable vector of `Data` types
 ```
 val myVec = Vec(elts:Iterable[Data])
@@ -75,8 +74,10 @@ val myVec = Vec(elts:Iterable[Data])
 [%header, cols="3,2"]
 |===
 | Operator         | Explanation
-| `val myVec = Vec(elts: Iterable[Data])` | `elts` initial `Data` (vector depth inferred)
-| `val myVec = Vec.fill(n: Int) { gen: Data }` | `n` is vec depth `gen` initial `Data` called once per element
+| `Vec(elts: Iterable[Data])` | `elts` initial `Data` (vector depth inferred)
+| `VecInit(elts: Iterable[Data])` | `elts` initial `Data`
+| `Vec.fill(n: Int) { gen: Data }` | `n` is vec depth `gen` initial `Data` called once per element
+| `Vec.tabulate(n: Int) { gen(i: Int): Data }` | gen is passed the current index `n`
 |===
 
 *Using*: access elements by dynamic or static indexing:
@@ -100,7 +101,7 @@ val myVec = Vec(elts:Iterable[Data])
 |===
 
 
-### State Elements
+=== State Elements
 Registers retain state until updated
 
 [%header,cols="1,1"]
@@ -114,7 +115,7 @@ Registers retain state until updated
 |===
 Updating: assign to latch new value on next clock: my_reg := next_val
 
-### Modules
+=== Modules
 *Defining*: subclass `Module` with elements, code:
 ```
 class Accum(width:Int) extends Module
@@ -129,7 +130,9 @@ class Accum(width:Int) extends Module
 ```
 *Usage*: access elements using dot notation: (code inside a `Module` is always running)
 ```
-val my_module = Module(new Accum(32))
+val my_module = Module(new Accum(32)) // Note required wrapping `Module` call
 my_module.io.in := some_data val
 sum := my_module.io.out
 ```
+
+include::includes/navigation-links.adoc[]

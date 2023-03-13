@@ -2,7 +2,7 @@
 :toc:
 
 
-### Connection operators
+=== Connection operators
 Connection operators can be confusing
 Notion of producer and consumer
 Of the form <LHS> <op> <RHS>
@@ -10,33 +10,39 @@ Of the form <LHS> <op> <RHS>
 |===
 | Example | kind | Description
 | `x := y`    | basic connector                     | `y drives x`
-| `bundle1 <> bundle2` | Chisel basic bulk connect | requirements on bundle matching
 |===
-#### Turducken bulk operators
-[cols="2,2,5"]
+==== Turducken bulk connect operators
+[cols="2,5"]
 |===
-| `data1 :<>= data2` | symmetric operator |
-| `data1 :>= data2` | producer on RHS | the right-hand-side of the connection; will always drive leaf connections, and never get driven by leaf connections ("aligned connection")
-| `data1 :\<= data2` | producer on LHS | the right-hand-side of the connection; will always be driven by leaf connections, and never drive leaf connections ("flipped connection")
-| `data1 :#= data2` | RHS is producer | all members will be driving, none will be driven-to
+| `c := p`   |   (mono-direction): connects all `p` members to `c`; requires `c` & `p` to not have any flipped members
+| `c :#= p`  |    (coercing mono-direction): connects all `p` members to `c`; regardless of alignment
+| `c :<= p`  |    (aligned-direction): connects all aligned (non-flipped) `c` members from `p`
+| `c :>= p`  |    (flipped-direction): connects all flipped `p` members from `c`
+| `c :<>= p` |     (bi-direction operator): connects all aligned `c` members from `p`; all flipped `p` members from `c`
 |===
 
-[%header,cols="3,4,1,1,1,1"]
-|=====
-| Turducken Properties     | Description | `:<>=` | `:\<=`  | `:>=` |  `:#=`
-| noDangles:               | Description | ✓ | ✓  | ✓ | ✓
-| noUnconnected:           | Description | ✓ | ✓  | ✓ | ✓
-| mustMatch:               | Description | ✓ | ✓  | ✓ | ✓
-| noWrongOrientations:     | Description | ✓ | ✓  | ❌ | ✓
-| noMismatchedWidths:      | Description | ✓ | ✓  | ✓ | ✓
-| connectToConsumer:       | Description | ✓ | ✓  | ✓ | ❌
-| connectToProducer:       | Description | ✓ | ❌  | ❌ | ✓
-| alwaysConnectToConsumer: | Description | ❌ | ❌  | ✓ | ❌
-|=====
+These operators may appear to be a random collection of symbols; however, the characters are consistent between operators and self-describe the semantics of each operator:
 
-### Connection modifiers
-[%header,cols="1,1,1"]
-|===
-| Waive |
-|
-|===
+* `:` always indicates the consumer, or left-hand-side, of the operator.
+* `=` always indicates the producer, or right-hand-side, of the operator.
+* Hence, `c := p` connects a consumer (`c`) and a producer (`p`).
+* `<` always indicates that some members will be driven producer-to-consumer, or right-to-left.
+* Hence, `c :<= p` drives members in producer (`p`) to members in consumer (`c`).
+* `>` always indicates that some signals will be driven consumer-to-producer, or left-to-right.
+* Hence, `c :>= p` drives members in consumer (`c`) to members producer (`p`).
+* Hence, `c :<>= p` both drives members from `p` to `c` and from `c` to `p`.
+* `#` always indicates to ignore member alignment and to drive producer-to-consumer.
+* Hence, `c :#= p` always drives members from `p` to `c` ignoring direction.
+
+==== Alignment: Flipped vs Aligned
+A member's alignment is a relative property: a member is aligned/flipped relative to another member of the same component or Chisel type. Hence, one must always say whether a member is flipped/aligned with respect to (w.r.t) another member of that type (parent, sibling, child etc.).
+
+In summary, a member is aligned or flipped w.r.t. another member of the hardware component. This means that the type of the consumer/producer is the only information needed to determine the behavior of any operator. Whether the consumer/producer is a member of a larger bundle is irrelevant; you ONLY need to know the type of the consumer/producer.
+
+==== Input/Output
+`Input(gen)`/`Output(gen)` are coercing operators. They perform two functions:
+[start]
+1. create a new Chisel type that has all flips removed from all recursive children members (still structurally equivalent to gen but no longer alignment type equivalent)
+2. apply `Flipped` if `Input`, keep aligned (do nothing) if `Output`. E.g. if we imagine a function called `cloneChiselTypeButStripAllFlips`, then `Input(gen)` is structurally and alignment type equivalent to `Flipped(cloneChiselTypeButStripAllFlips(gen))`.
+
+include::includes/navigation-links.adoc[]

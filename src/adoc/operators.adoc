@@ -40,3 +40,5 @@
 | x.orR            | OR-reduce               | 1
 | x.xorR           | XOR-reduce              | max(w(x), w(y))
 
+include::includes/navigation-links.adoc[]
+

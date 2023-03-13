@@ -1,15 +1,15 @@
 
-= Chisel Cheat Sheet
-==  Chisel3 Cheat Sheet
+= Chisel (3.5) Cheat Sheet
+
 [%header,cols="1,1"]
 |===
 |*Notation In This Document:* |  *Other sections*
-| *For Functions and Constructors:* +
-Arguments given as kwd:type (name and type(s)) Arguments in brackets ([...]) are optional. +
-*For Operators:*
-`c`, x, y are Chisel Data; n, m are Scala Int
-w(x), w(y) are the widths of x, y +
-(respectively) minVal(x), maxVal(x) are the minimum or maximum possible values of x
+| For Functions and Constructors: +
+Arguments given as *kwd:type* (name and type(s)) Arguments in brackets *([...])* are optional. +
+For Operators:
+`c`, `x`, `y` are Chisel Data; `n`, `m` are Scala Ints
+`w(x)`, `w(y)` are the widths of x, y +
+(respectively) `minVal(x)`, `maxVal(x)` are the minimum or maximum possible values of x
 |
 - <<data-types.adoc#Data Types, Data types>> +
 - <<connections.adoc#Connections, Connections>> +
@@ -18,16 +18,16 @@ w(x), w(y) are the widths of x, y +
 - <<standard-library.adoc#Standard Library, Standard Library>> +
 |===
 
-## Basic Chisel Constructs
+== Basic Chisel Constructs
 
-### Chisel Wire Operators:
+=== Chisel Wire Operators:
 ```
 // Allocate a as wire of type UInt()
 val x = Wire(UInt())
 x := y                   //Connect wire y to wire x
 ```
 
-### Chisel *When*
+=== Chisel *When*
 `when` executes blocks conditionally depending on `Bool`, and is equivalent to Verilog `if`
 ```
 when(condition1) {
@@ -39,7 +39,7 @@ when(condition1) {
 }
 ```
 
-### Chisel *Switch*
+=== Chisel *Switch*
 `switch` executes blocks conditionally when x matchs is(value)
 ```
 switch(x) {
@@ -52,7 +52,7 @@ switch(x) {
 }
 ```
 
-### Chisel *Enum*
+=== Chisel *Enum*
 Enum generates value literals for enumerations +
 Declaring `Enums`
 ```
@@ -80,7 +80,7 @@ class LoadStoreExample extends Module {
 }
 ```
 
-### Math Helpers:
+=== Math Helpers:
 [%header,cols="1,1"]
 |===
 | Function | Description
@@ -89,12 +89,13 @@ class LoadStoreExample extends Module {
 | isPow2(in:Int): Boolean | True if in is a power of 2
 |===
 
-- <<data-types.adoc#Data Types, Data types>>
-- <<connections.adoc#Connections, Connections>>
-- <<operators.adoc#Operators, Operators>>
-- <<hardware-generation.adoc#Hardware Generation, Hardware Generation>>
-- <<standard-library.adoc#Standard Library, Standard Library>>
+// - <<data-types.adoc#Data Types, Data types>>
+// - <<connections.adoc#Connections, Connections>>
+// - <<operators.adoc#Operators, Operators>>
+// - <<hardware-generation.adoc#Hardware Generation, Hardware Generation>>
+// - <<standard-library.adoc#Standard Library, Standard Library>>
 
+include::includes/navigation-links.adoc[]
 
 // include::data-types.adoc[]
 

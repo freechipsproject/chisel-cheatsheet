@@ -1,12 +1,14 @@
 = Hardware Generation
 :toc:
 
-## Functions
+== Functions
 Functions provide block abstractions for code. Scala functions that instantiate or return Chisel types are code generators. +
 
-Also: Scala’s `if` and `for` can be used to control hardware generation and are equivalent to Verilog generate `if`/`for`
+Also: Scala’s `if` and `for` can be used to control hardware generation and are equivalent to Verilog's `if`/`for`
 ```
-val number = Reg(if(can_be_negative) SInt() else UInt ())
+val number = Reg(if(canBeNegative) SInt() else UInt ())
 ```
 will create a Register of type SInt or UInt depending on the value of a Scala variable
+
+include::includes/navigation-links.adoc[]
 

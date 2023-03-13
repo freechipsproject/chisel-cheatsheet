@@ -1,7 +1,7 @@
 = Standard Library
 :toc:
 
-#### Standard Library -- Stateless
+== Standard Library -- Stateless
 
 [%header,cols="3,1,3"]
 |===
@@ -22,7 +22,7 @@
 | `PriorityMux(sel:Bits/Iterable[Bool], in:Iterable[Bits])` | Bits | A mux tree with either a one-hot select or multiple selects (where the first inputs are prioritized)
 |===
 
-#### Standard Library -- Stateful
+=== Standard Library -- Stateful
 
 [%header,cols="2,3,1"]
 |===
@@ -34,7 +34,7 @@
 `en` optional enable, default is true
 |===
 
-#### Standard Library -- Interfaces
+=== Standard Library -- Interfaces
 
 [%header,cols="3,2,2,2"]
 |===
@@ -60,7 +60,7 @@ n is number of producers| .io.in Vec of  inputs (flipped) +
 | RRArbiter      | like arbiter but uses Round robin scheme | same as Arbiter | Same as Arbiter
 |===
 
-#### Standard Library -- Examples -- Counter
+=== Standard Library -- Examples -- Counter
 Example: Simple Counter +
 Constructor `Counter(n:Int): Counter`
 ```
@@ -87,4 +87,6 @@ when (counterValue === 4.U) {
   ...
 }
 ```
+
+include::includes/navigation-links.adoc[]
 
