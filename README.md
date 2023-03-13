@@ -3,17 +3,15 @@ Cheatsheet for the Chisel hardware construction language: all the core functiona
 
 ## How to update the cheat sheet
 
-1. Make your edits to the file main.tex
-2. Generate the pdf.
-   1. On linux I used `pdflatex main.tex` on linux
-   2. Make sure your version looks good
-      1. Be careful that you have not broken the layout
-   3. When you are happy with your change update the version in `main.tex` currently this is around line 45 and looks like
-   4. Run `pdflatex main.tex` again
-   5. `mv main.tex chisel_cheatsheet.pdf`
-   6. Create a PR with your changes
-   7. When the PR is merged
-3. Release your new version
+1. Make your edits to the files in `adoc/src`
+1. Run the asciidoctor rendering program to convert `.adoc` files to `.html`
+   ```bash
+   ./src/scripts/build-doc.sh
+    ```
+1. When you are happy with your changes, push changes
+1. Create a PR with your changes
+1. When the PR is merged
+1. Release your new version
    1. tag the new sheet version and push it, for example
       1. `git tag 0.5.3 -a -m 'Added entry for RegInit with init'`
       2. `git push origin --tags`
@@ -22,13 +20,4 @@ Cheatsheet for the Chisel hardware construction language: all the core functiona
       2. On the next screen select `Draft a new release`
       3. On the next screen select your tag from the `Choose a tag` button
       4. Fill out the release stuff
-      5. Below the release description box click `Attach binaries`
-      6. In the box there, upload the `chisel_cheatsheet.pdf`
       7. Click `Publish release`
-
-## Alternative way to edit and regenerate
->This link may be stale
-
-[View this project on Overleaf.](https://www.overleaf.com/read/xpgmbbgjqszd)
-For edit access, ask one of the project maintainers.
-We also accept pull requests on GitHub.

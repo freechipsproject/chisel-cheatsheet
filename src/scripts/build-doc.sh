@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# build html files for all the files in src/adoc
 INPUT_DOC_DIR=src/adoc
 OUTPUT_DOC_DIR=doc
 
@@ -15,12 +16,3 @@ do
   OUTPUT_FILE_NAME=$OUTPUT_DOC_DIR/$FILE_NAME.html
   asciidoctor -o $OUTPUT_FILE_NAME $INPUT_FILE_NAME
 done
-
-#asciidoctor -o $OUTPUT_DOC_DIR/data-types.html $INPUT_DOC_DIR/data-types.adoc
-
-#pandoc --verbose \
-#    --wrap=none \
-#    --toc \
-#    --reference-links \
-#    -s -o -t asciidoc src/adoc/cheatsheet.adoc \
-#    doc/cheatsheet.md

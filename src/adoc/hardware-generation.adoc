@@ -10,5 +10,16 @@ val number = Reg(if(canBeNegative) SInt() else UInt ())
 ```
 will create a Register of type SInt or UInt depending on the value of a Scala variable
 
+== Clock and reset
+Domains using particular clock and reset references can be generated like this
+
+```
+withClockAndReset(mySpecialsClock, mySpecialReset) {
+  val specialReg = RegInit(32.W)
+  specialReg := specialReg +% 1
+```
+
+'''
+
 include::includes/navigation-links.adoc[]
 
