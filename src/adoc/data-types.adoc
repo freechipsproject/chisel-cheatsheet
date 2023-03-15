@@ -111,7 +111,7 @@ Registers retain state until updated
 | val myReg = RegInit(7.U(32.W))    | `myReg` is a Reg with initial value of 7
 | val myReg = RegNext(nextValue)    | Reg is updated at each rising clock, no initial value
 | val myReg = RegNext(nextValue, init = 3.U(32.W))    | Reg is updated at each rising clock, with initial value
-| val myReg = RegEnable(nextValue, init = 3.U(32.W))    | Reg is updated, has an enable gate
+| val myReg = RegEnable(nextValue, enable))    | Reg is updated, use enable
 |===
 Updating: assign to latch new value on next clock: my_reg := next_val
 
