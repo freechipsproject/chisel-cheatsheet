@@ -1,13 +1,12 @@
 # chisel-cheatsheet
 Cheatsheet for the Chisel hardware construction language: all the core functionality, on a single (double-sided) letter-sized sheet!
+In this version the cheat sheet has been moved to a google docs slide for
+easier editing. Unfortunately there's no way to store the google slides here
+so if you are interested in playing around with the slides create an issue,
+and we'll figure out a way to share.
 
-## How to update the cheat sheet
+## How to update the cheat sheet OLD-WAY
 
-1. Make your edits to the files in `adoc/src`
-1. Run the asciidoctor rendering program to convert `.adoc` files to `.html`
-   ```bash
-   ./src/scripts/build-doc.sh
-    ```
 1. When you are happy with your changes, push changes
 1. Create a PR with your changes
 1. When the PR is merged
