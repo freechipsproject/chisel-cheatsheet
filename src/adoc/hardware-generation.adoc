@@ -1,0 +1,25 @@
+= Hardware Generation
+:toc:
+
+== Functions
+Functions provide block abstractions for code. Scala functions that instantiate or return Chisel types are code generators. +
+
+Also: Scala’s `if` and `for` can be used to control hardware generation and are equivalent to Verilog's `if`/`for`
+```
+val number = Reg(if(canBeNegative) SInt() else UInt ())
+```
+will create a Register of type SInt or UInt depending on the value of a Scala variable
+
+== Clock and reset
+Domains using particular clock and reset references can be generated like this
+
+```
+withClockAndReset(mySpecialsClock, mySpecialReset) {
+  val specialReg = RegInit(32.W)
+  specialReg := specialReg +% 1
+```
+
+'''
+
+include::includes/navigation-links.adoc[]
+

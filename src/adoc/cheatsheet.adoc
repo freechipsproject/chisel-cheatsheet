@@ -1,0 +1,101 @@
+
+= Chisel (3.5) Cheat Sheet
+
+[%header,cols="1,1"]
+|===
+|*Notation In This Document:* |  *Other sections*
+| For Functions and Constructors: +
+Arguments given as *kwd:type* (name and type(s)) Arguments in brackets *([...])* are optional. +
+For Operators:
+`c`, `x`, `y` are Chisel Data; `n`, `m` are Scala Ints
+`w(x)`, `w(y)` are the widths of x, y +
+(respectively) `minVal(x)`, `maxVal(x)` are the minimum or maximum possible values of x
+|
+- <<data-types.adoc#Data Types, Data types>> +
+- <<connections.adoc#Connections, Connections>> +
+- <<operators.adoc#Operators, Operators>> +
+- <<hardware-generation.adoc#Hardware Generation, Hardware Generation>> +
+- <<standard-library.adoc#Standard Library, Standard Library>> +
+|===
+
+== Basic Chisel Constructs
+
+=== Chisel Wire Operators:
+```
+// Allocate a as wire of type UInt()
+val x = Wire(UInt())
+x := y                   //Connect wire y to wire x
+```
+
+=== Chisel *When*
+`when` executes blocks conditionally depending on `Bool`, and is equivalent to Verilog `if`
+```
+when(condition1) {
+  // run this block if condition1 true and skip rest
+} .elsewhen(condition2) {
+  // run this block if condition2 true and skip rest
+} .otherwise {
+  // run this block if none of the above ran
+}
+```
+
+=== Chisel *Switch*
+`switch` executes blocks conditionally when x matchs is(value)
+```
+switch(x) {
+  is(value1) {
+    // run if x === value1
+  }
+  is(value2) {
+    // run if x === value2
+  }
+}
+```
+
+=== Chisel *Enum*
+Enum generates value literals for enumerations +
+Declaring `Enums`
+```
+object Opcode extends ChiselEnum {
+  val load = Value(0x03.U)
+  val imm = Value(0x13.U)
+  val auipc = Value(0x17.U)
+  val store = Value(0x23.U)
+  val reg = Value(0x33.U)
+  val lui = Value(0x37.U)
+  val br = Value(0x63.U)
+  val jalr = Value(0x67.U)
+  val jal = Value(0x6f.U)
+}
+```
+Using Enums
+```
+class LoadStoreExample extends Module {
+  val io = IO(new Bundle {
+    val opcode = Input(Opcode())
+    val load_or_store = Output(Bool())
+  })
+  io.load_or_store := io.opcode.isOneOf(Opcode.load, Opcode.store)
+  printf(p"${io.opcode}")
+}
+```
+
+=== Math Helpers:
+[%header,cols="1,1"]
+|===
+| Function | Description
+| log2Ceil(in:Int): Int | log₂(in) rounded up
+| log2Floor(in:Int): Int | log₂(in) rounded down
+| isPow2(in:Int): Boolean | True if in is a power of 2
+|===
+
+// - <<data-types.adoc#Data Types, Data types>>
+// - <<connections.adoc#Connections, Connections>>
+// - <<operators.adoc#Operators, Operators>>
+// - <<hardware-generation.adoc#Hardware Generation, Hardware Generation>>
+// - <<standard-library.adoc#Standard Library, Standard Library>>
+
+include::includes/navigation-links.adoc[]
+
+// include::data-types.adoc[]
+

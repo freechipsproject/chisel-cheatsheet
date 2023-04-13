@@ -1,0 +1,67 @@
+= Connections
+:toc:
+
+
+=== Connection operators
+Connection operators can be confusing
+Notion of producer and consumer
+Of the form <LHS> <op> <RHS>
+[%header,cols="2,2,5"]
+|===
+| Example | kind | Description
+| `x := y`    | basic connector                     | `y drives x`
+| `bundle1 <> bundle2` | Chisel basic bulk connect | requirements on bundle matching
+|===
+==== Turducken bulk connect operators
+[cols="2,5"]
+|===
+| `c := p`   |   (mono-direction): connects all p members to c; requires c & p to not have any flipped members
+| `c :#= p`  |    (coercing mono-direction): connects all p members to c; regardless of alignment
+| `c :<= p`  |    (aligned-direction): connects all aligned (non-flipped) c members from p
+| `c :>= p`  |    (flipped-direction): connects all flipped p members from c
+| `c :<>= p` |     (bi-direction operator): connects all aligned c members from p; all flipped p members from c
+|===
+
+These operators may appear to be a random collection of symbols; however, the characters are consistent between operators and self-describe the semantics of each operator:
+
+* `:` always indicates the consumer, or left-hand-side, of the operator.
+* `=` always indicates the producer, or right-hand-side, of the operator.
+* Hence, `c := p` connects a consumer (`c`) and a producer (`p`).
+* `<` always indicates that some members will be driven producer-to-consumer, or right-to-left.
+* Hence, `c :<= p` drives members in producer (`p`) to members in consumer (`c`).
+* `>` always indicates that some signals will be driven consumer-to-producer, or left-to-right.
+* Hence, `c :>= p` drives members in consumer (`c`) to members producer (`p`).
+* Hence, `c :<>= p` both drives members from `p` to `c` and from `c` to `p`.
+* `#` always indicates to ignore member alignment and to drive producer-to-consumer.
+* Hence, `c :#= p` always drives members from `p` to `c` ignoring direction.
+
+
+==== Turducken bulk operators
+[cols="2,2,5"]
+|===
+| `data1 :<>= data2` | symmetric operator |
+| `data1 :>= data2` | producer on RHS | the right-hand-side of the connection; will always drive leaf connections, and never get driven by leaf connections ("aligned connection")
+| `data1 :\<= data2` | producer on LHS | the right-hand-side of the connection; will always be driven by leaf connections, and never drive leaf connections ("flipped connection")
+| `data1 :#= data2` | RHS is producer | all members will be driving, none will be driven-to
+|===
+
+[%header,cols="3,4,1,1,1,1"]
+|=====
+| Turducken Properties     | Description | `:<>=` | `:\<=`  | `:>=` |  `:#=`
+| noDangles:               | Description | ✓ | ✓  | ✓ | ✓
+| noUnconnected:           | Description | ✓ | ✓  | ✓ | ✓
+| mustMatch:               | Description | ✓ | ✓  | ✓ | ✓
+| noWrongOrientations:     | Description | ✓ | ✓  | ❌ | ✓
+| noMismatchedWidths:      | Description | ✓ | ✓  | ✓ | ✓
+| connectToConsumer:       | Description | ✓ | ✓  | ✓ | ❌
+| connectToProducer:       | Description | ✓ | ❌  | ❌ | ✓
+| alwaysConnectToConsumer: | Description | ❌ | ❌  | ✓ | ❌
+|=====
+
+=== Connection modifiers
+[%header,cols="1,1,1"]
+|===
+| Waive |
+|
+|===
+
